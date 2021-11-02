@@ -26,4 +26,7 @@ bicMatrix = [
     -A, I;
 ];
 end
-
+% TODO
+% Make compute_moment_of_inertia_matrix()
+% Update compute_moment_of_inertia_matrix arguments
+% Update compute_body_inertia_coefficients_matrix arguments
