@@ -1,5 +1,5 @@
 function [amcMatrix,dcMatrix] = calculate_added_mass_and_damping_coefficient_matrices(w,p,n,phi)
-% Summary
+% Calculates the added mass coefficient and damping coefficient matrices
 % 
 % The added mass coefficient matrix is the real component of V
 % The damping coefficient matrix is the imaginary component of V
