@@ -1,6 +1,6 @@
 function [hrtMatrix] = compute_hydrostatic_restoring_terms_matrix()
-%COMPUTE_HYDROSTATIC_RESTORING_TERMS_MATRIX Summary of this function goes here
-%   Detailed explanation goes here
+% A 6x6 matrix describing the body's hydrostatic restoring force
+%
 hrtMatrix = zeros(6,6);
 end
 
