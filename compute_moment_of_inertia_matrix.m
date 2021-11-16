@@ -22,6 +22,12 @@ function [moiMatrix] = compute_moment_of_inertia_matrix(pointMasses)
 % It is assumed that the glider can be treated as a sum of point masses and
 % that pointMasses are have positions relative to the gliders center of
 % mass
+    xx = 0;
+    yy = 0;
+    zz = 0;
+    xy = 0;
+    xz = 0;
+    yz = 0;
     for pm = pointMasses
         xx = xx + pm(1)*(pm(3)^2 + pm(4)^2);
         yy = yy + pm(1)*(pm(2)^2 + pm(4)^2);
