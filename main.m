@@ -20,7 +20,7 @@ mto = triangulation(model.Mesh.Elements.', model.Mesh.Nodes.');
 to = triangulation(T, P);
 
 % Plots traingulation object
-trimesh(t);
+trimesh(to);
 
 % Sets N equal to the number of surface triangles
 [N,~] = size(T);
