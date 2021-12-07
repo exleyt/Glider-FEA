@@ -1,5 +1,5 @@
-function [Y] = surface_integral_of_green_function(xn,txi,X)
-%SURFACE_INTEGRAL_OF_GREEN_FUNCTION Summary of this function goes here
+function [Y] = surface_integral_of_green_function_partial_xinormal(xn,txi,X,n)
+%SURFACE_INTEGRAL_OF_GREEN_FUNCTION_PARTIAL_XINORMAL_DERIVATIVE Summary of this function goes here
 %   Detailed explanation goes here
     addpath('asq')
 
@@ -14,13 +14,13 @@ function [Y] = surface_integral_of_green_function(xn,txi,X)
     d = 20;
     
     % Surface integral integrand
-    Gv = @(K,u,v) evaluate_green_function(xn,r(u,v),K,e,d);
+    Mv = @(K,u,v) evaluate_green_function_partial_xinormal(xn,r(u,v),K,e,d,n);
     
     % Inner surface integral over v
-    Gu = @(K,u) asq_3(Gv,K,u,0,1-u,e,d);
+    Mu = @(K,u) asq_3(Mv,K,u,0,1-u,e,d);
     
     % Outer surface integral over u
-    Gnk = @(K) asq_2(Gu,K,0,1,e,d);
+    Mnk = @(K) asq_2(Mu,K,0,1,e,d);
     
     % The nubmer of points to evaluate along K
     [~,s] = size(X); 
@@ -28,9 +28,9 @@ function [Y] = surface_integral_of_green_function(xn,txi,X)
     % A matrix to contain each step of K and the surface integral at that value
     Y = zeros(s,1);
     
-    % Fills that matrix with evaluations of Gnk at K
+    % Fills that matrix with evaluations of Mnk at K
     for j = 1:s
-        Y(j) = Gnk(X(j));
+        Y(j) = Mnk(X(j));
     end
 end
 

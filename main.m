@@ -23,10 +23,10 @@ mto = triangulation(model.Mesh.Elements.', model.Mesh.Nodes.');
 to = triangulation(T, P);
 
 % Plots traingulation object
-figure();
-trimesh(to);
-hold on
-axis equal
+%figure();
+%trimesh(to);
+%hold on
+%axis equal
 
 % Sets N equal to the number of surface triangles
 [N,~] = size(T);
@@ -39,31 +39,29 @@ C = incenter(to);
 F = faceNormal(to);
 
 % Plotes the triangulation object's normals
-quiver3(C(:,1),C(:,2),C(:,3), ...
-     F(:,1),F(:,2),F(:,3),0.5,'color','r');
+%quiver3(C(:,1),C(:,2),C(:,3), ...
+%     F(:,1),F(:,2),F(:,3),0.5,'color','r');
 
 % Setup new figure
-figure();
-hold on
+%figure();
+%hold on
 
 % Defines K from T=3:30 seconds
 K1 = (2*pi()/30)^2/9.8;
 K2 = (2*pi()/3)^2/9.8;
 
-% The step of each makima estimation point of K
-x = 80; % Number of makima points
-KS = (K2-K1)/(x-1); 
-X = K1:KS:K2;
+% The step of each estimation point of K
+x = 20;
+XS = (K2-K1)/(x-1); 
+X = K1:XS:K2;
 
-for j = 1:1
-    Z = zeros(2,x,N); % Determined by size of Mnk rn
+for n = 1:1 % Systems of equations building loop
+    Gnks = zeros(x,N);
+    Mnks = zeros(x,N,N);
     for k = 1:N
-        if (j ~= k)
-            [Z(:,:,k)] = surface_integral_of_green_function(C(j,:), to.Points(to.ConnectivityList(k,:),:),X);
-        end
+        [Gnk] = surface_integral_of_green_function(C(n,:), to.Points(to.ConnectivityList(k,:),:),X);
+        Gnks(:,n) = Gnks(:,n) + Gnk(:);
+        [Mnks(:,n,k)] = surface_integral_of_green_function_partial_xinormal(C(n,:), to.Points(to.ConnectivityList(k,:),:),X,F(n,:));
     end
-
-    plot(X,Z(1,:,2),"x");
-    plot(X,Z(2,:,2),"o");
 end
 
