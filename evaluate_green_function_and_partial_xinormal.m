@@ -1,4 +1,4 @@
-function [df] = evaluate_green_function_partial_xinormal(x,xi,K,e,d,n)
+function [f,df] = evaluate_green_function_and_partial_xinormal(x,xi,K,e,d,n)
 %EVALUATE_GREEN_FUNCTION_NORMAL_DERIVATIVE Summary of this function goes here
 %   Detailed explanation goes here
     grad = zeros(3,1);
