@@ -11,7 +11,7 @@ function [result] = evaluate_green_function(x,xi,K,e,d)
     % An asq estimation of infinity. Should be around the value that fun->0
     % Needs optimization, but not essential. It saves very little time.
     infi = 100;
-    dx2 = (x - xi)^2;
+    dx2 = (x - xi).^2;
     r1 = sqrt(dx2(1) + dx2(2) + dx2(3));
     r2 = sqrt(dx2(1) + dx2(2) + (x(3) + xi(3))^2);
     R = sqrt(dx2(1) + dx2(2));
