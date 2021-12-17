@@ -1,4 +1,4 @@
-function [Gnk,Mnk] = estimate_surface_integral_GM(xn,txi,n,K,x,w,e,d)
+function [Gnk,Mnk] = estimate_surface_integral_GM(xn,txi,n,K,x,w)
 %ESTIMATE_SURFACE_INTEGRAL_GM Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -13,7 +13,7 @@ function [Gnk,Mnk] = estimate_surface_integral_GM(xn,txi,n,K,x,w,e,d)
     Mnk = 0;
     for i = 1:4
         [fg,fm] = estimate_inner_surface_integral_GM(xn,r, ...
-            x(i)*0.5 + 0.5,n,K,x,w,e,d);
+            x(i)*0.5 + 0.5,n,K,x,w);
         Gnk = Gnk + fg * w(i);
         Mnk = Mnk + fm * w(i);
     end

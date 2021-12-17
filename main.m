@@ -10,7 +10,7 @@ importGeometry(model,"template-model\files\CORNER.STL");
 model.Geometry.translate([0,0,-20]);
 
 % Generates a finite element tetrahedra mesh object of the geometry
-generateMesh(model, 'GeometricOrder','linear','Hmin',5);
+generateMesh(model, 'GeometricOrder','linear','Hmin',12);
 
 % Plots mesh 
 %pdeplot3D(model);
@@ -65,7 +65,8 @@ K2 = (2*pi()/3)^2/9.8;
 %X = K1:XS:K2;
 
 % Defines the surface integral terms
-Gnks = zeros(N,D); % All N sums of Gnk * Fk as 6-dimensional vectors 
+Gnks = zeros(N,N); % All N^2 Gnk
+Gnks_sum = zeros(N,D); % All N sums of Gnk * Fk as 6-dimensional vectors 
 Mnks = zeros(N,N); % All N^2 Mnk
 
 % Defines values for guasian quadrature
@@ -74,17 +75,24 @@ x = [sqrt(3/7 - 2/7 * sqrt(6/5)); -sqrt(3/7 - 2/7 * sqrt(6/5)); ...
 w = [(18 + sqrt(30))/36;(18 + sqrt(300))/36; ...
      (18 - sqrt(30))/36;(18 - sqrt(3))/36];
 
-% Defines values for asq evaluation
-e = 10^-2;
-d = 20;
-
-% Fills Gnks and Mnks
-for n = 1:N
-    for k = 1:N
-        [Gnk,Mnks(n,k)] = estimate_surface_integral_GM(C(n,:), ...
-            to.Points(to.ConnectivityList(k,:),:),F(k,:),K1,x,w,e,d);
-        Gnks(n,:) = Gnks(n,:) + Gnk * F6(k,:);
-    end
-    disp(n)
+% Defines a list of N triangles
+txk = zeros(3,3,N);
+for k = 1:N
+    txk(:,:,k) = to.Points(to.ConnectivityList(k,:),:);
 end
 
+tic
+% Fills Gnks and Mnks
+parfor k = 1:N
+    for n = 1:N
+        [Gnks(n,k),Mnks(n,k)] = estimate_surface_integral_GM(C(n,:), ...
+            txk(:,:,k),F(k,:),K1,x,w);
+    end
+end
+for n = 1:N
+    for k = 1:N
+        Gnks_sum(n,:) = Gnks_sum(n,:) + Gnks(n,k) * F6(k,:);
+        Mnks(n,1) = Mnks(n,1) + 2*pi;
+    end
+end
+toc
