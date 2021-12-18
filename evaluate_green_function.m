@@ -11,12 +11,9 @@ function [result] = evaluate_green_function(x,xi,K)
     sx3 = x(3) + xi(3);
     r2 = sqrt(dx2(1) + dx2(2) + sx3^2);
     R = sqrt(dx2(1) + dx2(2));
-    fun = @(k) besselj(0,k*R)*exp(k*sx3)/ (k-K);
-    e = 10^-2; % an error value for asq estimation.
-    e2 = 10^-3; % an epsilon value for isolation of the singularity.
-    infi = 10; % a maximum depth for asq estimation.
-    d = 20; % an approximate infinite upper bound for the integral.
-    result = 1/r1 + 1/r2 + 2*K*(asq(fun,0,K-e2,e,d) + ...
-        asq(fun,K+e2,infi,e,d)) - 2*pi*1i*K*exp(K*(x(3) + ...
+    e = 10^-3; % an epsilon value for isolation of the singularity.
+    infi = 10; % an approximate infinite upper bound for the integral.
+    result = 1/r1 + 1/r2 + 2*K*(asq(R,sx3,K,0,K-e) + ...
+        asq(R,sx3,K,K+e,infi)) - 2*pi*1i*K*exp(K*(x(3) + ...
         xi(3)))*besselj(0,K*R);
 end
