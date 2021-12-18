@@ -92,7 +92,12 @@ end
 for n = 1:N
     for k = 1:N
         Gnks_sum(n,:) = Gnks_sum(n,:) + Gnks(n,k) * F6(k,:);
-        Mnks(n,1) = Mnks(n,1) + 2*pi;
     end
+    Mnks(n,n) = Mnks(n,n) + 2*pi;
 end
 toc
+
+phi = zeros(N,D);
+for j = 1:D
+    phi(:,j) = linsolve(Mnks,Gnks_sum(:,j));
+end
