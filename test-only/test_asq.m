@@ -1,4 +1,4 @@
-function [v,s,t,p,rt] = asq_test(fun,a,v,e,dmax)
+function [v,s,t,p,rt] = test_asq(fun,a,v,e,dmax)
 % Compares the output of asq to the builtin matlab integral
 %
 % It does this by integrating fun from a to b with a maximum asq error 
@@ -9,7 +9,7 @@ function [v,s,t,p,rt] = asq_test(fun,a,v,e,dmax)
 % better than int in a boolean t, a performance string that tells the 
 % time difference between the two calculations in p, and the time value
 % iteself is in rt
-    r1 = @() adaptive_simpson_quadrature(fun,a,v,e,dmax);
+    r1 = @() asq(fun,a,v,e,dmax);
     r2 = @() integral(fun,a,v);
     rt = timeit(r2) - timeit(r1);
     t = rt >= 0;

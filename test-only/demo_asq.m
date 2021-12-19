@@ -4,42 +4,42 @@ tt = 0;
 trt = 0';
 
 fun = @(x) 1*cos(1*x - pi()/4) + 2*cos(0.1*x - pi()/16);
-[v,~,t,~,rt] = asq_test(fun,-2*pi(),2*pi(),10^-6,30);
+[v,~,t,~,rt] = test_asq(fun,-2*pi(),2*pi(),10^-6,30);
 pv = pv + v;
 pt = pt + t;
 tt = tt + 1;
 trt = trt + rt;
 
 fun = @(x) x.^2;
-[v,~,t,~,rt] = asq_test(fun,-10,10,10^-6,30);
+[v,~,t,~,rt] = test_asq(fun,-10,10,10^-6,30);
 pv = pv + v;
 pt = pt + t;
 tt = tt + 1;
 trt = trt + rt;
 
 fun = @(x) x.^2;
-[v,~,t,~,rt] = asq_test(fun,-10,10,10^-6,30);
+[v,~,t,~,rt] = test_asq(fun,-10,10,10^-6,30);
 pv = pv + v;
 pt = pt + t;
 tt = tt + 1;
 trt = trt + rt;
 
 fun = @(x) x.^3;
-[v,~,t,~,rt] = asq_test(fun,-10,10,10^-6,30);
+[v,~,t,~,rt] = test_asq(fun,-10,10,10^-6,30);
 pv = pv + v;
 pt = pt + t;
 tt = tt + 1;
 trt = trt + rt;
 
 fun = @(x) exp(x);
-[v,~,t,~,rt] = asq_test(fun,-1000,0,10^-6,30);
+[v,~,t,~,rt] = test_asq(fun,-1000,0,10^-6,30);
 pv = pv + v;
 pt = pt + t;
 tt = tt + 1;
 trt = trt + rt;
 
 fun = @(x) log(x);
-[v,~,t,~] = asq_test(fun,.1,10,10^-6,30);
+[v,~,t,~] = test_asq(fun,.1,10,10^-6,30);
 pv = pv + v;
 pt = pt + t;
 tt = tt + 1;

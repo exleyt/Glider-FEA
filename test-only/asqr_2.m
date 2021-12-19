@@ -1,8 +1,9 @@
-function [result] = adaptive_simpson_quadrature_recursion(f,a,fa,m,fm,b,fb,whole,e,d,dmax)
+function [result] = asqr_2(f,K,a,fa,m,fm,b,fb,whole,e,d,dmax)
 % Recursivley estimates the integral of f from a to b, error e depth dmax
 % 
-% Recursively estimes the integral of a single parameter function f
-% Integrates from a to b where
+% Recursively estimes the integral of a double parameter function f
+% Integrates from a to b where over the second argument where
+% K is the constant first argument
 % a <= b
 % m is the midpoint between and b
 % fa, fb, and fm are the values of f evaluated at a, b, and m
@@ -11,9 +12,9 @@ function [result] = adaptive_simpson_quadrature_recursion(f,a,fa,m,fm,b,fb,whole
 % d is the current recursive depth
 % dmax is the maximum search depth or number of recursions
     % Gets the asq integral value of the left side of the bounds
-    [lm,flm,left] = adaptive_simpson_quadrature_mem(f,a,fa,m,fm);
+    [lm,flm,left] = asqm_2(f,K,a,fa,m,fm);
     % Gets the asq integral value of the right side of the bounds
-    [rm,frm,right] = adaptive_simpson_quadrature_mem(f,m,fm,b,fb);
+    [rm,frm,right] = asqm_2(f,K,m,fm,b,fb);
     % Difference between left + right asq integral values and whole
     delta = left + right - whole;
     % Returns a result if delta is less than the epsilon value
@@ -24,9 +25,8 @@ function [result] = adaptive_simpson_quadrature_recursion(f,a,fa,m,fm,b,fb,whole
         result = left + right + delta / 15;
     else
         % Recurse for the left side of the bounds
-        result = adaptive_simpson_quadrature_recursion(f,a,fa,lm,flm,m,fm,left,e/2,d+1,dmax);
+        result = asqr_2(f,K,a,fa,lm,flm,m,fm,left,e/2,d+1,dmax);
         % Recurse for the right side of the bounds
-        result = result + adaptive_simpson_quadrature_recursion(f,m,fm,rm,frm,b,fb,right,e/2,d+1,dmax); 
+        result = result + asqr_2(f,K,m,fm,rm,frm,b,fb,right,e/2,d+1,dmax); 
     end
 end
-
