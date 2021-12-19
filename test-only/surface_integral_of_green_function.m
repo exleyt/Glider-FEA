@@ -1,7 +1,7 @@
-function [Y] = surface_integral_of_green_function(xn,txi,X)
+function [Gnk] = surface_integral_of_green_function(xn,txi,K)
 %SURFACE_INTEGRAL_OF_GREEN_FUNCTION Summary of this function goes here
 %   Detailed explanation goes here
-    addpath('asq')
+    addpath('..')
 
     % Parametric function of triangular surface plane
     % Triangle defined on 0<=u<=1 and 0<=v<=1-u
@@ -20,17 +20,6 @@ function [Y] = surface_integral_of_green_function(xn,txi,X)
     Gu = @(K,u) asq_3(Gv,K,u,0,1-u,e,d);
     
     % Outer surface integral over u
-    Gnk = @(K) asq_2(Gu,K,0,1,e,d);
-    
-    % The nubmer of points to evaluate along K
-    [~,s] = size(X); 
-    
-    % A matrix to contain each step of K and the surface integral at that value
-    Y = zeros(s,1);
-    
-    % Fills that matrix with evaluations of Gnk at K
-    for j = 1:s
-        Y(j) = Gnk(X(j));
-    end
+    Gnk = asq_2(Gu,K,0,1,e,d);
 end
 
