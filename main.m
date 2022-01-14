@@ -30,8 +30,8 @@ to = triangulation(L,P);
 %hold on
 %axis equal
 
-% Sets N equal to the number of surface triangles
-[n,~] = size(L);
+% Sets S equal to the number of surface triangles
+[S,~] = size(L);
 
 % Finds each triangle's center and normal vector
 C = incenter(to);
@@ -42,7 +42,7 @@ N = faceNormal(to);
 %     F(:,1),F(:,2),F(:,3),0.5,'color','r');
 
 % Finds each triangle's 6-dimensional normal vector
-N6 = zeros(n,3);
+N6 = zeros(S,3);
 N6(:,1:3) = N(:,:);
 N6(:,4:6) = cross(C(:,:),N(:,:));
 
@@ -56,9 +56,11 @@ N6(:,4:6) = cross(C(:,:),N(:,:));
 
 % Temporarily define response inputs
 w = 2*pi()/30;
+theta = 0;
 g = 9.8;
 p = 1; 
 K = w^2/g;
+k = 1; 
 
 % Defines K from T=3:30 seconds
 %K1 = (2*pi()/30)^2/9.8;
@@ -70,11 +72,12 @@ K = w^2/g;
 %X = K1:XS:K2;
 
 % Defines a list of N triangles so that parfor can nicely distribute data
-T = zeros(3,3,n);
-for k = 1:n
-    T(:,:,k) = to.Points(to.ConnectivityList(k,:),:);
+T = zeros(3,3,S);
+for j = 1:S
+    T(:,:,j) = to.Points(to.ConnectivityList(j,:),:);
 end
 
-phi = calculate_velocity_potential_vector(C,N,N6,T,K);
+phi = calculate_velocity_potential_vector(S,C,N,N6,T,K);
 
-[A,B] = calculate_added_mass_and_damping_coefficient_matrices(T,phi,N6,p,w);
+[A,B] = calculate_added_mass_and_damping_coefficient_matrices(T,phi,N,p,w);
+[F] = calculate_exciting_forces_vector(T,phi,N,p,k,g,w,theta); % missing exp(i*w*t) for now. Should be able to factor out term
