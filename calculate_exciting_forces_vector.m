@@ -27,7 +27,7 @@ function [F] = calculate_exciting_forces_vector(T,phi,N,p,k,g,w,theta)
         E = exp(-1i*k*(T(1,1,m)*cost + T(1,2,m)*sint + T(1,3,m))); % missing e^iwt term from my notes on purpose for now    
         G = (B*expA + A*expB - C)/(A*B*(-C));
         for j = 1:3
-            F(j) = F(j) - 1i*p*g*n*E(1i*N(j) - phi(j)*D)*G;
+            F(j) = F(j) - 1i*p*g*n*E*(1i*N(j) - phi(j)*D)*G;
         end
         Hp = (B*expA + A*expB - C)/(A*C);
         Hu = (expC*(C - 1) - (expA*(A-1) + 1)/(A*A));

@@ -79,5 +79,5 @@ end
 
 phi = calculate_velocity_potential_vector(S,C,N,N6,T,K);
 
-[A,B] = calculate_added_mass_and_damping_coefficient_matrices(T,phi,N,p,w);
-[F] = calculate_exciting_forces_vector(T,phi,N,p,k,g,w,theta); % missing exp(i*w*t) for now. Should be able to factor out term
+[A,B] = calculate_added_mass_and_damping_matrices(T,phi,N,p,w);
+[F] = calculate_exciting_forces_vector(T,phi,N,p,k,g,w,theta); % missing exp(i*w*t) for now. Should be able to factor out term for use in solving eta
