@@ -1,3 +1,5 @@
+% NOTE: FFR -> Flagged For Removal
+% NOTE: Replace this with iterative asq???
 addpath('asq');
 
 % Creates a new pde object for mesh generation
@@ -7,44 +9,46 @@ model = createpde();
 importGeometry(model,"template-model\files\CORNER.STL");
 
 % Moves the geometry underneath the waterline (Z=0)
+% NOTE: Make this done automatically???
 model.Geometry.translate([0,0,-20]);
 
 % Generates a finite element tetrahedra mesh object of the geometry
+% NOTE: Hmin and Hmax should be set by user
 generateMesh(model, 'GeometricOrder','linear','Hmin',15);
 
-% Plots mesh 
+% FFR: Plots mesh
 pdeplot3D(model);
 
-% Makes a traingulation object of mesh
-mto = triangulation(model.Mesh.Elements.', model.Mesh.Nodes.');
+% Makes a traingulation object of the mesh
+MTO = triangulation(model.Mesh.Elements.', model.Mesh.Nodes.');
 
 % Makes a traingle connectivity and point list of surface triangles
-[L,P] = freeBoundary(mto);
+[TC,P] = freeBoundary(MTO);
 
-% Makes a traingulation object of mesh surface
-to = triangulation(L,P);
+% Makes a traingulation object of surface triangles
+to = triangulation(TC,P);
 
-% Plots traingulation object
+% FFR: Plots traingulation object
 %figure();
 %trimesh(to);
 %hold on
 %axis equal
 
-% Sets S equal to the number of surface triangles
-[S,~] = size(L);
+% Records the number of surface triangles
+[S,~] = size(to);
 
-% Finds each triangle's center and normal vector
+% Finds each triangle's center point and face normal vectors
 C = incenter(to);
-N = faceNormal(to);
+FN = faceNormal(to);
 
-% Plotes the triangulation object's normals
+% FFR: Plotes the triangulation object's normals
 %quiver3(C(:,1),C(:,2),C(:,3), ...
 %     F(:,1),F(:,2),F(:,3),0.5,'color','r');
 
-% Finds each triangle's 6-dimensional normal vector
-N6 = zeros(S,3);
-N6(:,1:3) = N(:,:);
-N6(:,4:6) = cross(C(:,:),N(:,:));
+% Creates each triangle's 6-dimensional normal vector
+FN6 = zeros(S,3);
+FN6(:,1:3) = FN(:,:);
+FN6(:,4:6) = cross(C(:,:),FN(:,:));
 
 % Plotes the triangulation object's higher dimension normals
 %quiver3(C(:,1),C(:,2),C(:,3), ...
@@ -61,6 +65,7 @@ g = 9.8;
 p = 1; 
 K = w^2/g;
 k = 1; 
+pm = [5,5;6,0;8,0;10,0];
 
 % Defines K from T=3:30 seconds
 %K1 = (2*pi()/30)^2/9.8;
@@ -77,8 +82,9 @@ for j = 1:S
     T(:,:,j) = to.Points(to.ConnectivityList(j,:),:);
 end
 
-phi = calculate_velocity_potential_vector(S,C,N,N6,T,K);
-[A,B] = calculate_added_mass_and_damping_matrices(T,phi,N,p,w);
-[F] = calculate_exciting_forces_vector(T,phi,N,p,k,g,w,theta); % missing exp(i*w*t) for now. Should be able to factor out term for use in solving eta
-M = compute_body_inertia_coefficients_matrix();
-C = compute_hydrostatic_restoring_terms_matrix();
+phi = calculate_velocity_potential_vector(S,C,FN,FN6,T,K);
+[A,B] = calculate_added_mass_and_damping_matrices(T,phi,FN,p,w);
+[F] = calculate_exciting_forces_vector(T,phi,FN,p,k,g,w,theta);
+M = compute_body_inertia_coefficients_matrix(pm);
+C = compute_hydrostatic_restoring_terms_matrix(pm,g);
+
