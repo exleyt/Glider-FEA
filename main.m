@@ -35,10 +35,10 @@ to = triangulation(TC,P);
 %axis equal
 
 % Records the number of surface triangles
-[S,~] = size(to);
+[N,~] = size(to);
 
 % Finds each triangle's center point and face normal vectors
-C  = incenter(to);
+CP  = incenter(to);
 FN = faceNormal(to);
 
 % FFR: Plotes the triangulation object's normals
@@ -46,9 +46,9 @@ FN = faceNormal(to);
 %     F(:,1),F(:,2),F(:,3),0.5,'color','r');
 
 % Creates each triangle's 6-dimensional normal vector
-FN6 = zeros(S,3);
+FN6 = zeros(N,3);
 FN6(:,1:3) = FN(:,:);
-FN6(:,4:6) = cross(C(:,:),FN(:,:));
+FN6(:,4:6) = cross(CP(:,:),FN(:,:));
 
 % Plotes the triangulation object's higher dimension normals
 %quiver3(C(:,1),C(:,2),C(:,3), ...
@@ -78,16 +78,16 @@ pm = [5,5;6,0;8,0;10,0];
 %X = K1:XS:K2;
 
 % Defines a list of N triangles so that parfor can nicely distribute data
-T = zeros(3,3,S);
-for j = 1:S
+T = zeros(3,3,N);
+for j = 1:N
     T(:,:,j) = to.Points(to.ConnectivityList(j,:),:);
 end
 
-phi = velocityPotential(S,C,FN,FN6,T,K);
+phi = velocityPotential(N,CP,FN,FN6,T,K);
 [A,B] = AddedMassAndDampingMatrices(T,phi,FN,p,w);
 [F] = excitingForce(T,phi,FN,p,k,g,w,theta);
 M = bodyInertiaMatrix(pm);
 C = hydrostaticRestoringMatrix(pm,g);
 
-nf = linsolve(-w^2*(M + A) + 1i*w*B + C,F);
-H = nf / a;
+nu = linsolve(-w^2*(M + A) + 1i*w*B + C,F);
+H = nu / a;
