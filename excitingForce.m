@@ -1,4 +1,4 @@
-function [F] = calculate_exciting_forces_vector(T,phi,N,p,k,g,w,theta)
+function [F] = excitingForce(T,phi,N,p,k,g,w,theta)
 % Calculates the vector of exciting forces on the glider
 %
 % Force is the 6 dimensional vector defined as ??? 

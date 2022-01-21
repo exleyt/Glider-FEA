@@ -1,4 +1,4 @@
-function [result] = evaluate_green_function(x,xi,K)
+function [result] = greenFunction(x,xi,K)
 % Numerically calculates the Green Function hdl.handle.net/20.500.12489/844
 %
 % Finds the complex valued influence of a pulsating source located at xi on

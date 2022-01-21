@@ -1,4 +1,4 @@
-function [phi1] = calculate_velocity_potential_1()
+function [phi1] = velocityPotentialIncident()
 % Calculates the velocity potential of incident wave with unit amplitude
 %   
 % i*g/w*e^(kz-i(k(x*cos(theta)+y*sin(theta))+ wt))

@@ -1,4 +1,4 @@
-function [phi] = calculate_velocity_potential_vector(S,C,N,N6,T,K)
+function [phi] = velocityPotential(S,C,N,N6,T,K)
 %CALCULATE_VELOCITY_POTENTIAL_VECTOR Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -16,7 +16,7 @@ function [phi] = calculate_velocity_potential_vector(S,C,N,N6,T,K)
     % Fills Gnks and Mnks
     parfor k = 1:S
         for n = 1:S
-            [Gnks(n,k),Mnks(n,k)] = estimate_surface_integral_GM(C(n,:), ...
+            [Gnks(n,k),Mnks(n,k)] = surfaceIntegralGMOuter(C(n,:), ...
                 T(:,:,k),N(k,:),K,x,w);
         end
     end

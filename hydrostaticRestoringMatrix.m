@@ -1,7 +1,7 @@
-function [C] = compute_hydrostatic_restoring_terms_matrix(pm,g)
+function [C] = hydrostaticRestoringMatrix(pm,g)
 % A 6x6 matrix describing the body's hydrostatic restoring force
-%
     C = zeros(6,6);
+    [~,N] = size(pm); 
     cog = zeros(3,1); 
     for j = 1:3
         cog(j) = sum(pm(j+1,1:N)) / N;

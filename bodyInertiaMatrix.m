@@ -1,4 +1,4 @@
-function [bicMatrix] = compute_body_inertia_coefficients_matrix(pm)
+function [bicMatrix] = bodyInertiaMatrix(pm)
 % A 6x6 matrix describing the body's inertia  with 6 degrees of freedom
 % 
 % The body's inertia coefficients matrix is defined as:
@@ -26,7 +26,7 @@ function [bicMatrix] = compute_body_inertia_coefficients_matrix(pm)
         -m*cog(3), 0, m*cog(1);
         m*cog(2), -m*cog(1), 0;
     ];
-    I = compute_moment_of_inertia_matrix(pm);
+    I = MomentOfInertia(pm);
     bicMatrix = [  
         M, A;
         -A, I;

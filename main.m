@@ -17,7 +17,7 @@ model.Geometry.translate([0,0,-20]);
 generateMesh(model, 'GeometricOrder','linear','Hmin',15);
 
 % FFR: Plots mesh
-pdeplot3D(model);
+% pdeplot3D(model);
 
 % Makes a traingulation object of the mesh
 MTO = triangulation(model.Mesh.Elements.', model.Mesh.Nodes.');
@@ -38,7 +38,7 @@ to = triangulation(TC,P);
 [S,~] = size(to);
 
 % Finds each triangle's center point and face normal vectors
-C = incenter(to);
+C  = incenter(to);
 FN = faceNormal(to);
 
 % FFR: Plotes the triangulation object's normals
@@ -65,13 +65,14 @@ g = 9.8;
 p = 1; 
 K = w^2/g;
 k = 1; 
+a = 1;
 pm = [5,5;6,0;8,0;10,0];
 
-% Defines K from T=3:30 seconds
+% FFR: Defines K from T=3:30 seconds
 %K1 = (2*pi()/30)^2/9.8;
 %K2 = (2*pi()/3)^2/9.8;
 
-% The step of each estimation point of K
+% FFR: The step of each estimation point of K
 %x = 20;
 %XS = (K2-K1)/(x-1); 
 %X = K1:XS:K2;
@@ -82,9 +83,11 @@ for j = 1:S
     T(:,:,j) = to.Points(to.ConnectivityList(j,:),:);
 end
 
-phi = calculate_velocity_potential_vector(S,C,FN,FN6,T,K);
-[A,B] = calculate_added_mass_and_damping_matrices(T,phi,FN,p,w);
-[F] = calculate_exciting_forces_vector(T,phi,FN,p,k,g,w,theta);
-M = compute_body_inertia_coefficients_matrix(pm);
-C = compute_hydrostatic_restoring_terms_matrix(pm,g);
+phi = velocityPotential(S,C,FN,FN6,T,K);
+[A,B] = AddedMassAndDampingMatrices(T,phi,FN,p,w);
+[F] = excitingForce(T,phi,FN,p,k,g,w,theta);
+M = bodyInertiaMatrix(pm);
+C = hydrostaticRestoringMatrix(pm,g);
 
+nf = linsolve(-w^2*(M + A) + 1i*w*B + C,F);
+H = nf / a;

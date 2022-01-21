@@ -1,4 +1,4 @@
-function [A,B] = calculate_added_mass_and_damping_matrices(T,phi,N,p,w)
+function [A,B] = AddedMassAndDampingMatrices(T,phi,N,p,w)
 % Calculates the added mass coefficient and damping coefficient matrices
 % 
 % The added mass coefficient matrix is the real component of V
