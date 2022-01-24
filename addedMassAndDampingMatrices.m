@@ -1,4 +1,4 @@
-function [A,B] = AddedMassAndDampingMatrices(T,phi,N,p,w)
+function [A,B] = addedMassAndDampingMatrices(T,phi,N,p,w)
 % Calculates the added mass coefficient and damping coefficient matrices
 % 
 % The added mass coefficient matrix is the real component of V
@@ -6,7 +6,7 @@ function [A,B] = AddedMassAndDampingMatrices(T,phi,N,p,w)
 % V = p*SurfaceIntegral(N6(i)*phi(j),S,dS)
 % Where:
 % phi is the radiation potential vector
-% N6 is the normal vector
+% N is the normal vector
 % p is the density of water at the operating temperature
 % w is the gliders angular frequency
     rhs = zeros(6,6);

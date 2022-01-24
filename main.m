@@ -84,7 +84,7 @@ for j = 1:N
 end
 
 phi = velocityPotential(N,CP,FN,FN6,T,K);
-[A,B] = AddedMassAndDampingMatrices(T,phi,FN,p,w);
+[A,B] = addedMassAndDampingMatrices(T,phi,FN,p,w);
 [F] = excitingForce(T,phi,FN,p,k,g,w,theta);
 M = bodyInertiaMatrix(pm);
 C = hydrostaticRestoringMatrix(pm,g);
