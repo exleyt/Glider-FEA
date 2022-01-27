@@ -1,4 +1,4 @@
-function [moiMatrix] = MomentOfInertia(pointMasses)
+function [moiMatrix] = momentOfInertia(pointMasses)
 % A 3x3 describing the body's moment of inertia
 %
 % The moment of inertia matrix is the sum of the matrices: 

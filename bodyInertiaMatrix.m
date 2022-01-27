@@ -26,7 +26,7 @@ function [bicMatrix] = bodyInertiaMatrix(pm)
         -m*cog(3), 0, m*cog(1);
         m*cog(2), -m*cog(1), 0;
     ];
-    I = MomentOfInertia(pm);
+    I = momentOfInertia(pm);
     bicMatrix = [  
         M, A;
         -A, I;
