@@ -7,20 +7,8 @@ function [phi] = velocityPotential(S,C,N,N6,T,K)
     Gnks_sum = zeros(S,6); % All N sums of Gnk * Fk as 6-dimensional vectors 
     Mnks = zeros(S,S); % All N^2 Mnk
 
-    % Guassian weights
-    w3 = 1/3;
-    w7 = [0.1259391805448;
-            0.1259391805448;
-            0.1259391805448;
-            0.1323941527885;
-            0.1323941527885;
-            0.1323941527885;
-            0.225];
-
-    oneSixth = 1/6;
-
     % Fills Gnks and Mnks
-    for k = 1:S
+    parfor k = 1:S
         % Paremeterizes triangle to (u,v)
         Tk = T(:,:,k);
         ru = Tk(2,:) - Tk(1,:);
@@ -28,6 +16,8 @@ function [phi] = velocityPotential(S,C,N,N6,T,K)
 
         % The area of the traingle
         A = 0.5*norm(cross(ru,rv));
+
+        oneSixth = 1/6;
         
         % The guassian points to evaluate at
         r3 = [oneSixth*ru + oneSixth*rv; 
@@ -40,6 +30,16 @@ function [phi] = velocityPotential(S,C,N,N6,T,K)
               0.4701420641051*ru + 0.4701420641051*rv;
               0.0597158717898*ru + 0.4701420641051*rv;
               0.3333333333333*ru + 0.3333333333333*rv];
+        
+        % Guassian weights
+        w3 = 1/3;
+        w7 = [0.1259391805448;
+            0.1259391805448;
+            0.1259391805448;
+            0.1323941527885;
+            0.1323941527885;
+            0.1323941527885;
+            0.225];
         
         for n = 1:S 
             if n~=k
