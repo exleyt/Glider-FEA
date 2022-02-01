@@ -15,7 +15,7 @@ function [moiMatrix] = momentOfInertia(pointMasses)
 % Ixy = -Sum(1,j,xj * yj * mj)
 % Ixz = -Sum(1,j,xj * zj * mj)
 % Iyz = -Sum(1,j,yj * zj * mj)   
-% pointMasses is the matrix of mjs and pjs
+% pointMasses is the matrix of [mjs,pjs]
 % mj is the jth point mass
 % pj is the position vector of the jth point mass (xj,yj,zj)
 %

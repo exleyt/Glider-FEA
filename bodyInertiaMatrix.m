@@ -11,7 +11,9 @@ function [bicMatrix] = bodyInertiaMatrix(pm)
 %   -myg    mgx     0       I31     I32     I33
 % ]
 % Where:
-% m is the total body mass
+% pointMasses is the matrix of [mjs,pjs]
+% mj is the jth point mass
+% pj is the position vector of the jth point mass (xj,yj,zj)
 % the center of gravity vector (cog) is [xg, yg, zg]
 % I is the 3x3 moment of inertia matrix
     [~,N] = size(pm);     
@@ -32,7 +34,3 @@ function [bicMatrix] = bodyInertiaMatrix(pm)
         -A, I;
     ];
 end
-% TODO
-% Make compute_moment_of_inertia_matrix()
-% Update compute_moment_of_inertia_matrix arguments
-% Update compute_body_inertia_coefficients_matrix arguments
