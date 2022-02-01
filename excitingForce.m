@@ -58,7 +58,7 @@ function [F] = excitingForce(T,phi,N,p,k,g,theta)
             n0 = N(m,a)*r0(b) - N(m,b)*r0(a);
             nu = N(m,a)*ru(b) - N(m,b)*ru(a);
             nv = N(m,a)*rv(b) - N(m,b)*rv(a);
-            F(j) = F(j) + sF46*(n0*a1 + nu*au + nv*av) - sF1*phi(m,j)*SphiI;
+            F(j) = F(j) + sF46*(n0*a1 + nu*au + nv*av) - sF13*phi(m,j)*SphiI;
         end
     end
     
