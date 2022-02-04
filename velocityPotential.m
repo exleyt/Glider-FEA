@@ -1,16 +1,16 @@
-function [phi] = velocityPotential(S,C,N,N6,T,K)
+function [phi] = velocityPotential(N,CP,FN,FN6,Tri,K)
 %CALCULATE_VELOCITY_POTENTIAL_VECTOR Summary of this function goes here
 %   Detailed explanation goes here
 
     % Defines the surface integral terms
-    Gnks = zeros(S,S); % All N^2 Gnk
-    Gnks_sum = zeros(S,6); % All N sums of Gnk * Fk as 6-dimensional vectors 
-    Mnks = zeros(S,S); % All N^2 Mnk
+    Gnks = zeros(N,N); % All N^2 Gnk
+    Gnks_sum = zeros(N,6); % All N sums of Gnk * Fk as 6-dimensional vectors 
+    Mnks = zeros(N,N); % All N^2 Mnk
 
     % Fills Gnks and Mnks
-    parfor k = 1:S
+    parfor k = 1:N
         % Paremeterizes triangle to (u,v)
-        Tk = T(:,:,k);
+        Tk = Tri(:,:,k);
         ru = Tk(2,:) - Tk(1,:);
         rv = Tk(3,:) - Tk(1,:);
 
@@ -41,11 +41,11 @@ function [phi] = velocityPotential(S,C,N,N6,T,K)
             0.1323941527885;
             0.225];
         
-        for n = 1:S 
+        for n = 1:N 
             if n~=k
                 % Sums each guassian function evaulation
                 for m = 1:3
-                    [fg,fm] = greenFunctionAndPartialXINormal(C(n,:),r3(m,:),N(k,:),K);
+                    [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r3(m,:),FN(k,:),K);
                     Gnks(n,k) = Gnks(n,k) + fg*w3;
                     Mnks(n,k) = Mnks(n,k) + fm*w3;
                 end
@@ -53,7 +53,7 @@ function [phi] = velocityPotential(S,C,N,N6,T,K)
             else
                 % Sums each guassian function evaulation
                 for m = 1:7
-                    [fg,fm] = greenFunctionAndPartialXINormal(C(n,:),r7(m,:),N(k,:),K);
+                    [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r7(m,:),FN(k,:),K);
                     Gnks(n,k) = Gnks(n,k) + fg*w7(m);
                     Mnks(n,k) = Mnks(n,k) + fm*w7(m);
                 end
@@ -62,14 +62,14 @@ function [phi] = velocityPotential(S,C,N,N6,T,K)
             Mnks(n,k) = A*Mnks(n,k);
         end
     end
-    for n = 1:S
-        for k = 1:S
-            Gnks_sum(n,:) = Gnks_sum(n,:) + Gnks(n,k) * N6(k,:);
+    for n = 1:N
+        for k = 1:N
+            Gnks_sum(n,:) = Gnks_sum(n,:) + Gnks(n,k) * FN6(k,:);
         end
         Mnks(n,n) = Mnks(n,n) + 2*pi;
     end
     
-    phi = zeros(S,6);
+    phi = zeros(N,6);
     for j = 1:6
         phi(:,j) = linsolve(Mnks,Gnks_sum(:,j));
     end
