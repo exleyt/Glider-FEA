@@ -1,4 +1,4 @@
-function [A,B] = addedMassAndDampingMatrices(T,phi,N,p,w)
+function [A,B] = addedMassAndDampingMatrices(Tri,phi,FN,p,w)
 % Calculates the added mass coefficient and damping coefficient matrices
 % 
 % The added mass coefficient matrix is the real component of V
@@ -12,19 +12,22 @@ function [A,B] = addedMassAndDampingMatrices(T,phi,N,p,w)
     rhs = zeros(6,6);
     [S,~] = size(phi);
     for k = 1:S
-        ru = T(2,:,k) - T(1,:,k);
-        rv = T(3,:,k) - T(1,:,k);
-        mp = p * norm(cross(ru,rv));
-        r = T(1,:,k)*0.5 + ru/6 -rv/6;
+        r0 = Tri(1,:,k);
+        ru = Tri(2,:,k) - r0;
+        rv = Tri(3,:,k) - r0;
+        Ap = 0.5*norm(cross(ru,rv))*p;
         for j = 1:6
+            Apphi = Ap*phi(k,j);
             for i = 1:3
-               rhs(i,:) = rhs(i,:) + mp*phi(k,i)*r(i);
+               rhs(i,j) = rhs(i,j) + Apphi*FN(k,i);
             end
             for i = 4:6
-                c = mod(i + 1,3) + 1;
-                d = mod(i,3) + 1;
-                rhs(i,:) = rhs(i,:) + mp*phi(k,i)*(N(c)*r(d) ...
-                    - N(d)*r(c));
+                a = mod(j + 1,3) + 1; % 3,1,2
+                b = mod(j,3) + 1; % 2,3,1
+                n0 = FN(k,a)*r0(b) - FN(k,b)*r0(a);
+                nu = FN(k,a)*ru(b) - FN(k,b)*ru(a);
+                nv = FN(k,a)*rv(b) - FN(k,b)*rv(a);
+                rhs(i,j) = rhs(i,j) + Apphi*(n0 + (nu + nv)/3);
             end
         end
     end
