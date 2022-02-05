@@ -10,14 +10,14 @@ function [A,B] = addedMassAndDampingMatrices(Tri,phi,FN,p,w)
 % p is the density of water at the operating temperature
 % w is the gliders angular frequency
     rhs = zeros(6,6);
-    [S,~] = size(phi);
+    [~,S] = size(phi);
     for k = 1:S
         r0 = Tri(1,:,k);
         ru = Tri(2,:,k) - r0;
         rv = Tri(3,:,k) - r0;
         Ap = 0.5*norm(cross(ru,rv))*p;
         for j = 1:6
-            Apphi = Ap*phi(k,j);
+            Apphi = Ap*phi(j,k);
             for i = 1:3
                rhs(i,j) = rhs(i,j) + Apphi*FN(k,i);
             end

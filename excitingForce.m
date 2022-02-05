@@ -1,17 +1,17 @@
-function [F] = excitingForce(T,phi,N,p,k,g,theta)
+function [F] = excitingForce(T,phi,FN,p,k,g,theta)
 % Calculates the vector of exciting forces on the glider
 %
 % Calculates the surface integral of -i*w*p*(n(j)*phiI - phi(j)*dphiI/dn)
 % T is a list of triangles (3,3,S) s.t. T(2,:,1) is the postiion vector 
 %  [x,y,z] of the first triangle's second point 
-% phi is a list of radiation potential vectors (S,6) 
+% phi is a list of radiation potential vectors (6,S) 
 % N is a list of normal vectors (S,3)
 % p is the water density
 % k is the wave number
 % g is the acceleration due to gravity
 % theta is the direction of the incident wave
     F = zeros(6,1);
-    [S,~] = size(phi);
+    [~,S] = size(phi);
     cost = cos(theta);
     sint = sin(theta);
     for m = 1:S
@@ -38,14 +38,14 @@ function [F] = excitingForce(T,phi,N,p,k,g,theta)
         % Parts that factor out of the integral
         sF = n*exps1;
         % A part of dphiI/dn that is independed of (u,v) and doesn't factor
-        SphiI = k*(N(m,1)*cost + N(m,2)*sint + 1i*N(m,3));
+        SphiI = k*(FN(m,1)*cost + FN(m,2)*sint + 1i*FN(m,3));
 
         % Facotrs out of whole integral for j:[1,3]
         sF13 = sF*a1;
         
         % Simple integral where for j:[1,3] s.t. dphiI/dn = N(m,j)
         for j = 1:3
-            F(j) = F(j) + sF13*(1i*N(m,j) - phi(m,j)*SphiI);
+            F(j) = F(j) + sF13*(1i*FN(m,j) - phi(j,m)*SphiI);
         end
 
         % Facotrs out of whole integral for j:[4,6]
@@ -55,10 +55,10 @@ function [F] = excitingForce(T,phi,N,p,k,g,theta)
         for j = 4:6
             a = mod(j + 1,3) + 1; % 3,1,2
             b = mod(j,3) + 1; % 2,3,1
-            n0 = N(m,a)*r0(b) - N(m,b)*r0(a);
-            nu = N(m,a)*ru(b) - N(m,b)*ru(a);
-            nv = N(m,a)*rv(b) - N(m,b)*rv(a);
-            F(j) = F(j) + sF46*(n0*a1 + nu*au + nv*av) - sF13*phi(m,j)*SphiI;
+            n0 = FN(m,a)*r0(b) - FN(m,b)*r0(a);
+            nu = FN(m,a)*ru(b) - FN(m,b)*ru(a);
+            nv = FN(m,a)*rv(b) - FN(m,b)*rv(a);
+            F(j) = F(j) + sF46*(n0*a1 + nu*au + nv*av) - sF13*phi(j,m)*SphiI;
         end
     end
     

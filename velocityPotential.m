@@ -69,8 +69,8 @@ function [phi] = velocityPotential(N,CP,FN,FN6,Tri,K)
         Mnks(n,n) = Mnks(n,n) + 2*pi;
     end
     
-    phi = zeros(N,6);
+    phi = zeros(6,N);
     for j = 1:6
-        phi(:,j) = linsolve(Mnks,Gnks_sum(:,j));
+        phi(j,:) = linsolve(Mnks,Gnks_sum(:,j));
     end
 end
