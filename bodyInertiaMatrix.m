@@ -16,12 +16,12 @@ function [bicMatrix] = bodyInertiaMatrix(pm)
 % pj is the position vector of the jth point mass (xj,yj,zj)
 % the center of gravity vector (cog) is [xg, yg, zg]
 % I is the 3x3 moment of inertia matrix
-    [~,N] = size(pm);     
+    [N,~] = size(pm);     
     cog = zeros(3,1); 
     for j = 1:3
-        cog(j) = sum(pm(j+1,1:N)) / N;
+        cog(j) = sum(pm(1:N,j+1)) / N;
     end
-    m = sum(pm(1,1:N));
+    m = sum(pm(1:N,1));
     M = diag([m,m,m]);
     A = [
         0, m*cog(3), -m*cog(2);
