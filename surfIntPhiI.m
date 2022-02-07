@@ -6,8 +6,8 @@ function [a1,au,av] = surfIntPhiI(su,sv)
 %  1/0 errors.
 % Alternative approaches include taking the limit of the anti-derivative
 %  as the respective values approach su and sv or plugging su and sv into
-%  the integrand before integration.
-% However, this approach is by far the fastest. 
+%  the integrand before integration. However, this approach is by far the 
+%  fastest I can think of. 
     if su == 0 && sv == 0
         % Limit of equ1 as (su,sv)->(0,0)
         a1 = 0.5;
