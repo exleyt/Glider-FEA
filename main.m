@@ -1,5 +1,6 @@
-%% 
+%% Loads And Plots Glider's Mesh
 % NOTE: FFR -> Flagged For Removal
+
 % NOTE: Replace this with iterative asq???
 addpath('asq');
 
@@ -35,6 +36,7 @@ FN6(:,4:6) = cross(CP(:,:),FN(:,:));
 % Plotes the triangulation object's rotational normals
 quiver3(CP(:,1),CP(:,2),CP(:,3), ...
      FN6(:,4),FN6(:,5),FN6(:,6),0.5,'color','g');
+%% Loads Saved Data
 
 % Defines save files
 tstr = append(model,'-ts.txt'); % replace with [] if file doesn't exist
@@ -45,6 +47,7 @@ phistr = append(model,'-phis.txt'); % replace with [] if file doesn't exist
 rts = readmatrix(tstr);
 rraos = readmatrix(raostr);
 rphis = readmatrix(phistr);
+%% Defines RAO Variables
 
 % Temporarily define response inputs
 g = 9.81; 
@@ -64,6 +67,10 @@ Ts = setdiff(nts,rts);
 thetas = [0,pi()/2,pi()]; % list of incident angles
 thetac = ["o","+","*"]; % list of plot modifiers for each theta
 [~,ntheta] = size(thetas);
+%% Solves For The Glider's RAOs
+
+M = bodyInertiaMatrix(pm);
+C = hydrostaticRestoringMatrix(pm,g);
 
 % Defines a list of N triangles so that parfor can nicely slice data
 Tri = zeros(3,3,N);
@@ -71,12 +78,8 @@ for j = 1:N
     Tri(:,:,j) = to.Points(to.ConnectivityList(j,:),:);
 end
 
-M = bodyInertiaMatrix(pm);
-C = hydrostaticRestoringMatrix(pm,g);
-
 phis = zeros(6,N,nT);
 RAOs = zeros(6,ntheta,nT);
-
 for j = 1:nT
     w = 2*pi()/Ts(j); % sets angular frequency
     K = w^2/g; % sets K(w)
@@ -93,7 +96,9 @@ for j = 1:nT
         RAOs(:,i,j) = abs(H); % response amplitude operator
     end
 end
+%% Writes To New Save Files
 
+% Combines saved data with new data
 Tcs = [Ts,setdiff(rts,Ts)];
 [~,nTc] = size(Tcs);
 phics = zeros(6,N,nTc);
@@ -105,6 +110,7 @@ for j = 1:nTc - nT
     RAOcs(:,:,nT+j) = rraos(6*j-5:6*j,:);
 end
 
+% Writes combined data to file
 writematrix(Tcs, tstr);
 fid = fopen(raostr,'w');
 fclose(fid);
@@ -114,6 +120,7 @@ for j = 1:nTc
     writematrix(RAOcs(:,:,j),raostr,'WriteMode','append')
     writematrix(phics(:,:,j),phistr,'WriteMode','append')
 end
+%% Plots RAOs
 
 figure(2)
 tl = tiledlayout(3,1);
