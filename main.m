@@ -53,12 +53,12 @@ l = 106.4; % wavelength
 k = 2*pi()/l; % wavenumber
 a = 1; % wave amplitude
 pm = [9,0,0,-0.3
-    18,0,0.34,-0.24004882;
-    18,0,0.68,-0.18009764;
-    18,0,1.2,-0.12014646;
-    18,0,1.4,-0.0531422;
-    9,0,1.7,0]; % point masses along body length (x)
-nts = 2:10; %union(2:10,4:0.2:6); % list of wave periods 
+    18,0.34,0,-0.24004882;
+    18,0.68,0,-0.18009764;
+    18,1.2,0,-0.12014646;
+    18,1.4,0,-0.0531422;
+    9,1.7,0,0]; % point masses along body length (x)
+nts = union(2:10,4:0.2:6); % list of wave periods 
 Ts = setdiff(nts,rts); 
 [~,nT] = size(Ts);
 thetas = [0,pi()/2,pi()]; % list of incident angles
