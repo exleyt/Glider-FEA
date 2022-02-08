@@ -9,9 +9,9 @@ function [result] = greenFunction(x,xi,K)
 % w is the waves angular frequency
 % g is acceleration due to gravity
     dx2 = (x - xi).^2;
-    r1 = rsqrt(dx2(1) + dx2(2) + dx2(3));
+    r1 = 1/sqrt(dx2(1) + dx2(2) + dx2(3));
     sx3 = x(3) + xi(3);
-    r2 = rsqrt(dx2(1) + dx2(2) + sx3^2);
+    r2 = 1/sqrt(dx2(1) + dx2(2) + sx3^2);
     R = sqrt(dx2(1) + dx2(2));
     e = 10^-3; % an epsilon value for isolation of the singularity.
     infi = 10; % an approximate infinite upper bound for the integral.
