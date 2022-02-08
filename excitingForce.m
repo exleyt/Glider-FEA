@@ -43,7 +43,7 @@ function [F] = excitingForce(T,phi,FN,p,k,g,theta)
         % Factors out of whole integral for j:[1,3]
         sF13 = sF*a1;
         
-        % Simple integral where for j:[1,3] s.t. n(j) = N(m,j)
+        % Simple integral for j:[1,3] s.t. n(j) = N(m,j)
         for j = 1:3
             F(j) = F(j) + sF13*(1i*FN(m,j) - phi(j,m)*SphiI);
         end
