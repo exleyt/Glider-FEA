@@ -40,24 +40,27 @@ function [F] = excitingForce(T,phi,FN,p,k,g,theta)
         % A part of dphiI/dn that is independed of (u,v) and doesn't factor
         SphiI = k*(FN(m,1)*cost + FN(m,2)*sint + 1i*FN(m,3));
 
-        % Facotrs out of whole integral for j:[1,3]
+        % Factors out of whole integral for j:[1,3]
         sF13 = sF*a1;
         
-        % Simple integral where for j:[1,3] s.t. dphiI/dn = N(m,j)
+        % Simple integral where for j:[1,3] s.t. n(j) = N(m,j)
         for j = 1:3
             F(j) = F(j) + sF13*(1i*FN(m,j) - phi(j,m)*SphiI);
         end
 
-        % Facotrs out of whole integral for j:[4,6]
+        % Factors out of whole integral for j:[4,6]
         sF46 = 1i*sF;
 
-        % Less simple integral for j:[4,6] s.t. dphiI/dn = n0 + nu*u + nv*v
+        % Less simple integral for j:[4,6] s.t. n(j) = n0 + nu*u + nv*v
         for j = 4:6
-            a = mod(j + 1,3) + 1; % 3,1,2
-            b = mod(j,3) + 1; % 2,3,1
+            a = mod(j + 1,3) + 1;   % 3,1,2
+            b = mod(j,3) + 1;       % 2,3,1
+
+            % n0 + nu*u + nv*v
             n0 = FN(m,a)*r0(b) - FN(m,b)*r0(a);
             nu = FN(m,a)*ru(b) - FN(m,b)*ru(a);
             nv = FN(m,a)*rv(b) - FN(m,b)*rv(a);
+
             F(j) = F(j) + sF46*(n0*a1 + nu*au + nv*av) - sF13*phi(j,m)*SphiI;
         end
     end
