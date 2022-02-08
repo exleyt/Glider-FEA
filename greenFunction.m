@@ -2,7 +2,7 @@ function [result] = greenFunction(x,xi,K)
 % Numerically calculates the Green Function for finding the RAO
 %
 % Finds the complex valued influence of a pulsating source located at xi on
-% the jth potential at x where: 
+%  the potential at x where: 
 % x is the location of the potential
 % xi is the location of the pulsating source
 % K = w^2/g

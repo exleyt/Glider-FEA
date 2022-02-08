@@ -5,7 +5,7 @@ function [F] = excitingForce(T,phi,FN,p,k,g,theta)
 % T is a list of triangles (3,3,S) s.t. T(2,:,1) is the postiion vector 
 %  [x,y,z] of the first triangle's second point 
 % phi is a list of radiation potential vectors (6,S) 
-% N is a list of normal vectors (S,3)
+% FN is a list of normal vectors (S,3)
 % p is the water density
 % k is the wave number
 % g is the acceleration due to gravity
