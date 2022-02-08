@@ -40,14 +40,14 @@ quiver3(CP(:,1),CP(:,2),CP(:,3), ...
 %% Loads Saved Data
 
 % Defines save files
-tstr = append(model,'-ts.txt'); % replace with [] if file doesn't exist
-raostr = append(model,'-raos.txt'); % replace with [] if file doesn't exist
-phistr = append(model,'-phis.txt'); % replace with [] if file doesn't exist
+tstr = append(model,'-ts.txt'); 
+raostr = append(model,'-raos.txt'); 
+phistr = append(model,'-phis.txt'); 
 
 % Reads from savefiles
-rts = readmatrix(tstr);
-rraos = readmatrix(raostr);
-rphis = readmatrix(phistr);
+rts = readmatrix(tstr); % replace with [] if file doesn't exist
+rraos = readmatrix(raostr); % replace with [] if file doesn't exist
+rphis = readmatrix(phistr); % replace with [] if file doesn't exist
 %% Defines RAO Variables
 
 % Temporarily define response inputs
@@ -62,7 +62,7 @@ pm = [9,0,0,-0.3
     18,1.2,0,-0.12014646;
     18,1.4,0,-0.0531422;
     9,1.7,0,0]; % point masses along body length (x)
-nts = 2:10; %union(2:10,4:0.2:6); % list of wave periods 
+nts = 2:5; %union(2:10,4:0.2:6); % list of wave periods 
 Ts = setdiff(nts,rts); 
 [~,nT] = size(Ts);
 thetas = [0,pi()/2,pi()]; % list of incident angles
@@ -141,7 +141,7 @@ ylim([0 35])
 linkaxes([ax1,ax2,ax3],'xy')
 xlabel(tl,'Period')
 ylabel(tl,'RAO')
-t.TileSpacing = 'compact';
+tl.TileSpacing = 'compact';
 
 for j = 1:nTc
     for i = 1:ntheta

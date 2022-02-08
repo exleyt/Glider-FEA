@@ -32,8 +32,8 @@ function [A,B] = addedMassAndDampingMatrices(Tri,phi,FN,p,w)
 
             % Less simple integral for i:[4,6] s.t. n(i) = n0 + nu*u + nv*v 
             for i = 4:6
-                a = mod(j + 1,3) + 1;% 3,1,2
-                b = mod(j,3) + 1;% 2,3,1
+                a = mod(j + 1,3) + 1;   % 3,1,2
+                b = mod(j,3) + 1;       % 2,3,1
 
                  % n0 + nu*u + nv*v
                 n0 = FN(k,a)*r0(b) - FN(k,b)*r0(a);

@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="528455149" file="C:\Users\trevy\Documents\MATLAB\Glider-FEA\AUV-RAO-FEA.prj" location="C:\Users\trevy\Documents\MATLAB\Glider-FEA" name="AUV-RAO-FEA" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="4083979711" file="C:\Users\trevy\Documents\MATLAB\Glider-FEA\AUV-RAO-FEA.prj" location="C:\Users\trevy\Documents\MATLAB\Glider-FEA" name="AUV-RAO-FEA" target="target.mlapps" target-name="Package App">
     <param.appname>AUV-RAO-FEA</param.appname>
     <param.authnamewatermark>Trevyn Exley</param.authnamewatermark>
     <param.email>exleyt@oregonstate.edu</param.email>
@@ -41,6 +41,9 @@
     </fileset.main>
     <fileset.depfun>
       <file>${PROJECT_ROOT}\addedMassAndDampingMatrices.m</file>
+      <file>${PROJECT_ROOT}\asq\asq.m</file>
+      <file>${PROJECT_ROOT}\asq\asqm.m</file>
+      <file>${PROJECT_ROOT}\asq\asqr.m</file>
       <file>${PROJECT_ROOT}\bodyInertiaMatrix.m</file>
       <file>${PROJECT_ROOT}\excitingForce.m</file>
       <file>${PROJECT_ROOT}\greenFunction.m</file>
@@ -52,7 +55,6 @@
       <file>${PROJECT_ROOT}\velocityPotential.m</file>
     </fileset.depfun>
     <fileset.resources>
-      <file>${PROJECT_ROOT}\asq</file>
       <file>${PROJECT_ROOT}\models</file>
     </fileset.resources>
     <fileset.package />
