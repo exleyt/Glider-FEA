@@ -1,15 +1,33 @@
 function [phi] = velocityPotential(N,CP,FN,FN6,Tri,K)
-%CALCULATE_VELOCITY_POTENTIAL_VECTOR Summary of this function goes here
-%   Detailed explanation goes here
+% Returns the time independent velocity potential across the surface
+%
+% Estimates the time independent velocity potential of a surface as a
+%  piece-wise matrix (6,N) for each of the N triangles that make up the
+%  surface at their center points using guassians to estimate surface 
+%  integrals defined over green functions where:
+% N is the number of surface triangles
+% CP is a (N,3) matrix of triangle center points
+% FN is a (N,3) matrix of triangle normals
+% FN6 is a (N,6) matrix of triangle normals in 6 dof
+% Tri is a (3,3,N) matrix of triangles where each row is [x,y,z]
+% K = w^2/g
+% w is the waves angular frequency
+% g is acceleration due to gravity 
+%
+% Solves the linear equation:
+% 2*pi*phi{j}(CP{n}) + Sum(k:[1,N],M{n,k}*phi{j}(CP{k})) = ...
+%  Sum(k:[1,N],G{n,k}*FN6(CP{k})) s.t. n = 1...N
+% G{nk} = surface integral of G(CP{n},X{k}) w.r.t Tri{k}
+% M{nk} = surface integral of d(G(CP{n},X{k}))/d(FN{k}) w.r.t Tri{k}
 
     % Defines the surface integral terms
     Gnks = zeros(N,N); % All N^2 Gnk
-    Gnks_sum = zeros(N,6); % All N sums of Gnk * Fk as 6-dimensional vectors 
+    Gnks_sum = zeros(N,6); % All N sums of Gnk*FNk as 6-dimensional vectors 
     Mnks = zeros(N,N); % All N^2 Mnk
 
     % Fills Gnks and Mnks
     parfor k = 1:N
-        % Paremeterizes triangle to (u,v)
+        % Paremeterizes triangle to (u,v) s.t. r = Tk(1,:) + ru*u + rv*v
         Tk = Tri(:,:,k);
         ru = Tk(2,:) - Tk(1,:);
         rv = Tk(3,:) - Tk(1,:);
@@ -41,6 +59,7 @@ function [phi] = velocityPotential(N,CP,FN,FN6,Tri,K)
             0.1323941527885;
             0.225];
         
+        % Finds and stores the integral evaluation for each Gnk and Mnk
         for n = 1:N 
             if n~=k
                 % Sums each guassian function evaulation
@@ -62,13 +81,18 @@ function [phi] = velocityPotential(N,CP,FN,FN6,Tri,K)
             Mnks(n,k) = A*Mnks(n,k);
         end
     end
+    
     for n = 1:N
         for k = 1:N
+            % Sums Gnks*nk for each n at each dimension 
             Gnks_sum(n,:) = Gnks_sum(n,:) + Gnks(n,k) * FN6(k,:);
         end
+        % Adds 2pi to each Mnk where k=n
         Mnks(n,n) = Mnks(n,n) + 2*pi;
     end
     
+    % Solves the linear equation Sum(Mnk*phijk,k:[1,n]) = Gnks_sumnj for
+    %  each dimesnion j
     phi = zeros(6,N);
     for j = 1:6
         phi(j,:) = linsolve(Mnks,Gnks_sum(:,j));
