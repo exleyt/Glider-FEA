@@ -1,3 +1,4 @@
+function main()
 %% Loads And Plots Glider's Mesh
 % NOTE: FFR -> Flagged For Removal
 
@@ -148,4 +149,5 @@ for j = 1:nTc
         plot(ax2,Tcs(j),RAOcs(1,i,j),thetac(i))
         plot(ax3,Tcs(j),RAOcs(2,i,j),thetac(i))
     end
+end
 end
