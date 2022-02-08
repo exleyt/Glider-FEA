@@ -58,7 +58,7 @@ pm = [9,0,0,-0.3
     18,1.2,0,-0.12014646;
     18,1.4,0,-0.0531422;
     9,1.7,0,0]; % point masses along body length (x)
-nts = union(2:10,4:0.2:6); % list of wave periods 
+nts = 2:10; %union(2:10,4:0.2:6); % list of wave periods 
 Ts = setdiff(nts,rts); 
 [~,nT] = size(Ts);
 thetas = [0,pi()/2,pi()]; % list of incident angles
@@ -80,7 +80,6 @@ RAOs = zeros(6,ntheta,nT);
 for j = 1:nT
     w = 2*pi()/Ts(j); % sets angular frequency
     K = w^2/g; % sets K(w)
-
 
     phis(:,:,j) = velocityPotential(N,CP,FN,FN6,Tri,K);
     [A,B] = addedMassAndDampingMatrices(Tri,phis(:,:,j),FN,p,w);
