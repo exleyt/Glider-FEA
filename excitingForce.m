@@ -24,13 +24,13 @@ function [F] = excitingForce(T,phi,FN,p,k,g,theta)
         n = norm(cross(ru,rv));
 
         % e^s1
-        s1 = k*(r0(3) - 1i*(r0(1)*cost + r0(2)*sint));
+        s0 = k*(r0(3) - 1i*(r0(1)*cost + r0(2)*sint));
         % e^su*u
         su = k*(ru(3) - 1i*(ru(1)*cost + ru(2)*sint));
         % e^sv*v
         sv = k*(rv(3) - 1i*(rv(1)*cost + rv(2)*sint));
 
-        exps1 = exp(s1);
+        exps1 = exp(s0);
         
         % Integral of [1,u,v]*e^(su*u)*e^(sv*v)dvdu s.t. u:[0,1] v:[0,1-u]
         [a1,au,av] = surfIntPhiI(su,sv);  
