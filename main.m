@@ -1,16 +1,42 @@
-function main()
+%function main()
 %% Loads And Plots Glider's Mesh
 % NOTE: FFR -> Flagged For Removal
 
 % NOTE: Replace this with iterative asq???
 addpath('asq');
 
-% Makes a traingulation object of the mesh
-model = "models/Glider v9";
-to = stlread(append(model,".stl"));
+model = createpde();
 
-% For some reason the model is read 10 times too small???
-to = triangulation(to.ConnectivityList, to.Points * 10);
+% Creates a new pde object for mesh generation
+modelpath = "models/Glider v0";
+bodypath = " Wingless.stl";
+wingpath = " Wings.stl";
+importGeometry(model,append(modelpath,bodypath));
+
+scale(model.Geometry, 0.0001);
+
+% FFR: Plots geometry
+figure(3);
+pdegplot(model);
+
+% Generates a finite element tetrahedra mesh object of the geometry
+generateMesh(model, 'GeometricOrder','linear','Hmin',0.01);
+
+% FFR: Plots mesh
+figure(4);
+pdeplot3D(model.Mesh);
+
+bto = stlread(append(modelpath,bodypath));
+wto = stlread(append(modelpath,wingpath));
+
+[nbP,~] = size(bto.Points);
+wtoCL = wto.ConnectivityList + [nbP,nbP,nbP];
+toCL = [bto.ConnectivityList;wtoCL];
+toP = [bto.Points*0.0001;wto.Points*0.001];
+
+to = triangulation(toCL, toP);
+
+[N,~] = size(to.ConnectivityList);
 
 % FFR: Plots traingulation object
 figure(1);
@@ -26,9 +52,6 @@ FN = faceNormal(to);
 quiver3(CP(:,1),CP(:,2),CP(:,3), ...
      FN(:,1),FN(:,2),FN(:,3),0.5,'color','r');
 
-% Records the number of surface triangles
-[N,~] = size(to);
-
 % Creates each triangle's 6-dimensional normal vector
 FN6 = zeros(N,3);
 FN6(:,1:3) = FN(:,:);
@@ -40,14 +63,14 @@ quiver3(CP(:,1),CP(:,2),CP(:,3), ...
 %% Loads Saved Data
 
 % Defines save files
-tstr = append(model,'-ts.txt'); 
-raostr = append(model,'-raos.txt'); 
-phistr = append(model,'-phis.txt'); 
+tstr = append(modelpath,'-ts.txt'); 
+raostr = append(modelpath,'-raos.txt'); 
+phistr = append(modelpath,'-phis.txt'); 
 
 % Reads from savefiles
-rts = readmatrix(tstr); % replace with [] if file doesn't exist
-rraos = readmatrix(raostr); % replace with [] if file doesn't exist
-rphis = readmatrix(phistr); % replace with [] if file doesn't exist
+rts = []; %readmatrix(tstr); % replace with [] if file doesn't exist
+rraos = []; %readmatrix(raostr); % replace with [] if file doesn't exist
+rphis = []; %readmatrix(phistr); % replace with [] if file doesn't exist
 %% Defines RAO Variables
 
 % Temporarily define response inputs
@@ -150,4 +173,4 @@ for j = 1:nTc
         plot(ax3,Tcs(j),RAOcs(2,i,j),thetac(i))
     end
 end
-end
+%end
