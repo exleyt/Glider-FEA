@@ -1,14 +1,12 @@
-function [phi] = velocityPotential(N,CP,FN,FN6,Tri,K)
+function [phi] = velocityPotential(CP,FN,Tri,K)
 % Returns the time independent velocity potential across the surface
 %
 % Estimates the time independent velocity potential of a surface as a
 %  piece-wise matrix (6,N) for each of the N triangles that make up the
 %  surface at their center points using guassians to estimate surface 
 %  integrals defined over green functions where:
-% N is the number of surface triangles
 % CP is a (N,3) matrix of triangle center points
 % FN is a (N,3) matrix of triangle normals
-% FN6 is a (N,6) matrix of triangle normals in 6 dof
 % Tri is a (3,3,N) matrix of triangles where each row is [x,y,z]
 % K = w^2/g
 % w is the waves angular frequency
@@ -19,6 +17,8 @@ function [phi] = velocityPotential(N,CP,FN,FN6,Tri,K)
 %  Sum(k:[1,N],G{n,k}*FN6(CP{k})) s.t. n = 1...N
 % G{nk} = surface integral of G(CP{n},X{k}) w.r.t Tri{k}
 % M{nk} = surface integral of d(G(CP{n},X{k}))/d(FN{k}) w.r.t Tri{k}
+    % N is the number of surface triangles
+    [N,~] = size(CP);
 
     % Defines the surface integral terms
     Gnks = zeros(N,N); % All N^2 Gnk
@@ -81,6 +81,9 @@ function [phi] = velocityPotential(N,CP,FN,FN6,Tri,K)
             Mnks(n,k) = A*Mnks(n,k);
         end
     end
+
+    % Creates each triangle's 6-dimensional normal vector
+    FN6 = normal6DOF(CP,FN);
     
     for n = 1:N
         for k = 1:N

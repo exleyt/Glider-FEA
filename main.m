@@ -79,9 +79,7 @@ quiver3(CP(:,1),CP(:,2),CP(:,3), ...
      FN(:,1),FN(:,2),FN(:,3),0.5,'color','r');
 
 % Creates each triangle's 6-dimensional normal vector
-FN6 = zeros(N,3);
-FN6(:,1:3) = FN(:,:);
-FN6(:,4:6) = cross(CP(:,:),FN(:,:));
+FN6 = normal6DOF(CP,FN);
 
 % Plotes the triangulation object's rotational normals
 quiver3(CP(:,1),CP(:,2),CP(:,3), ...
