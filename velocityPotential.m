@@ -1,13 +1,13 @@
-function [phi] = velocityPotential(CP,FN,Tri,K)
+function [phi] = velocityPotential(Tri,CP,FN,K)
 % Returns the time independent velocity potential across the surface
 %
 % Estimates the time independent velocity potential of a surface as a
 %  piece-wise matrix (6,N) for each of the N triangles that make up the
 %  surface at their center points using guassians to estimate surface 
 %  integrals defined over green functions where:
+% Tri is a (3,3,N) matrix of triangles where each row is [x,y,z]
 % CP is a (N,3) matrix of triangle center points
 % FN is a (N,3) matrix of triangle normals
-% Tri is a (3,3,N) matrix of triangles where each row is [x,y,z]
 % K = w^2/g
 % w is the waves angular frequency
 % g is acceleration due to gravity 
