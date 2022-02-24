@@ -1,4 +1,4 @@
-function [C] = hydrostaticRestoringMatrix(pm,g,p,V,CB,S,S11,S22)
+function [C] = hydrostaticRestoringMatrix(pm,g,p,mesh,face)
 % A 6x6 matrix describing the body's hydrostatic restoring force
 %
 % The matrix C is made up of the terms, Cij s.t.
@@ -16,7 +16,11 @@ function [C] = hydrostaticRestoringMatrix(pm,g,p,V,CB,S,S11,S22)
 %
 % This is from a textbook where it is assumed that the origin is the center
 %  of flotation which it very much is not as currently defined
-    [N,~] = size(pm);    
+    [CL,P] = waterplaneTriangulation(mesh,face);
+    [S,CF,Ixx,Iyy] = waterplaneMoments(CL,P);
+    [V,CB] = volumeMoments(app.Model.Mesh);
+
+    [N,~] = size(pm);
 
     % Center of gravity
     CG = sum(pm(1:N,2:4),1) / N;
@@ -26,9 +30,9 @@ function [C] = hydrostaticRestoringMatrix(pm,g,p,V,CB,S,S11,S22)
 
     C = zeros(6,6);
     C(3,3) = p*g*S;
-    C(4,4) = g*(p*(S22 + V*CB(3)) - m*CG(3));
+    C(4,4) = g*(p*(Iyy + V*CB(3)) - m*CG(3));
     C(4,6) = -g*(p*V*CB(1) - m*CG(1));
-    C(5,5) = g*(p*(S11 + V*CB(3)) - m*CG(3));
+    C(5,5) = g*(p*(Ixx + V*CB(3)) - m*CG(3));
     C(5,6) = -g*(p*V*CB(2) - m*CG(2));
 end
 
