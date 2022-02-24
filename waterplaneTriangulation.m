@@ -1,4 +1,4 @@
-function [CL,P2] = waterplaneTriangulation(model,face)
+function [CL,P2] = waterplaneTriangulation(mesh,face)
 % Find the triangles that make up the waterplane
 %
 % Takes a meshed model and the face that makes up its waterplane and
@@ -6,15 +6,15 @@ function [CL,P2] = waterplaneTriangulation(model,face)
 %  CL(N,3) and list of points P(n,3) that can be used to create a 
 %  triangulation object 
     % Finds the nodes of the waterplane
-    L1 = findNodes(model.Mesh,'Region','Face',face); % List of node indices
+    L1 = findNodes(mesh,'Region','Face',face); % List of node indices
     [~,nL1] = size(L1);
     P = zeros(nL1,3); % List of node points
     for j = 1:nL1
-        P(j,:) = model.Mesh.Nodes(:,L1(j));
+        P(j,:) = mesh.Nodes(:,L1(j));
     end
 
     % Creates triangulation of mesh of tetrahedra
-     mto = triangulation(model.Mesh.Elements.', model.Mesh.Nodes.');
+     mto = triangulation(mesh.Elements.', mesh.Nodes.');
     
     % Makes a traingle connectivity and point list of surface triangles
     [CL2,P2] = freeBoundary(mto);
