@@ -28,11 +28,19 @@ function [C] = hydrostaticRestoringMatrix(pm,g,p,mesh,face)
     % Mass of glider
     m = sum(pm(1:N,1));
 
-    C = zeros(6,6);
-    C(3,3) = p*g*S;
-    C(4,4) = g*(p*(Iyy + V*CB(3)) - m*CG(3));
-    C(4,6) = -g*(p*V*CB(1) - m*CG(1));
-    C(5,5) = g*(p*(Ixx + V*CB(3)) - m*CG(3));
-    C(5,6) = -g*(p*V*CB(2) - m*CG(2));
+    Ch = p*g*S;
+    W = m*g;
+    Fb = p*g*V;
+    C44 = -W*CG(3) + Fb*CB(3) + p*g*Ixx + Ch*CF(2)^2;
+    C55 = -W*CG(3) + Fb*CB(3) + p*g*Iyy + Ch*CF(1)^2;
+
+    C = [
+        0,  0,  0,          0,                  0,                  0;
+        0,  0,  0,          0,                  0,                  0;
+        0,  0,  Ch,         Ch*CF(2),           -Ch*CF(1),          0;
+        0,  0,  Ch*CF(2),   C44,                -Ch*CF(1)*CF(2),    (W - Fb)*CF(1);
+        0,  0,  -Ch*CF(1),  -Ch*CF(1)*CF(2),    C55,                (W - Fb)*CF(2);
+        0,  0,  0,          0,                  0,                  0;
+    ];
 end
 
