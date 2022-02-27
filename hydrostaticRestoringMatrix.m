@@ -1,17 +1,16 @@
 function [C] = hydrostaticRestoringMatrix(pm,g,p,model,face)
 % A 6x6 matrix describing the body's hydrostatic restoring force
 %
-% The matrix C is made up of the terms, Cij s.t.
-% C22 = p*g*S
-% C44 = g*(p*(S11 + V*zb) - m*zg)
-% C45 = -g*(p*V*yb - m*yg)
-% C65 = -g*(p*V*xb - m*xg)
-% C66 = g*(p*(S22 + V*zb) - m*zg)
-% p is the water density
+% The matrix C is made up of the terms where
+% pointMasses is the matrix of [mjs,pjs]
+% mj is the jth point mass
+% pj is the position vector of the jth point mass (xj,yj,zj)
 % g is the acceleration due to gravity
-% V is the displaced volume
-% center of gravity, cog is [xg,yg,zg]
-% center of buoyancy, cob is [xb,yb,zb]
+% p is the water density
+% model is a meshed pdemodel
+% face is the face number of the waterplane on the model's geometry
+% center of gravity, Cg is [xg,yg,zg]
+% center of buoyancy, Cb is [xb,yb,zb]
 % m is the total glider's mass
 %
 % This is from a textbook where it is assumed that the origin is the center
@@ -20,19 +19,14 @@ function [C] = hydrostaticRestoringMatrix(pm,g,p,model,face)
     [S,CF,Ixx,Iyy] = waterplaneMoments(CL,P);
     [V,CB] = volumeMoments(model.Mesh);
 
-    [N,~] = size(pm);
+    m = sum(pm(:,1)); % total mass
+    Cg = sum(pm(:,2:4).*pm(:,1),1)/m; % center of gravity
 
-    % Center of gravity
-    CG = sum(pm(1:N,2:4),1) / N;
-
-    % Mass of glider
-    m = sum(pm(1:N,1));
-
-    Ch = p*g*S;
-    W = m*g;
-    Fb = p*g*V;
-    C44 = -W*CG(3) + Fb*CB(3) + p*g*Ixx + Ch*CF(2)^2;
-    C55 = -W*CG(3) + Fb*CB(3) + p*g*Iyy + Ch*CF(1)^2;
+    Ch = p*g*S; % force per unit distance
+    W = m*g; % weight
+    Fb = p*g*V; % buoyancy force
+    C44 = -W*Cg(3) + Fb*CB(3) + p*g*Ixx + Ch*CF(2)^2;
+    C55 = -W*Cg(3) + Fb*CB(3) + p*g*Iyy + Ch*CF(1)^2;
 
     C = [
         0,  0,  0,          0,                  0,                  0;
