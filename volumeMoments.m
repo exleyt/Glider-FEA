@@ -13,7 +13,7 @@ function [V,CB] = volumeMoments(mesh)
         e = mesh.Elements(:,j);
         tetra = mesh.Nodes(:,e);
         tetraCP = sum(tetra,2)/4;
-        tetraV = volume(mesh,e);
+        tetraV = volume(mesh,j);
 
         CB = CB + tetraV*tetraCP;
     end
