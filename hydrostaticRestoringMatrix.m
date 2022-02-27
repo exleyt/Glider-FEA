@@ -37,4 +37,3 @@ function [C] = hydrostaticRestoringMatrix(pm,g,p,model,face)
         0,  0,  0,          0,                  0,                  0;
     ];
 end
-
