@@ -7,7 +7,6 @@ function [result] = momentOfInertia(pm)
 %   Ixy     Iyy     Iyz
 %   Ixz     Iyz     Izz
 % ] s.t.
-% cog is the horizontal center of gravity vector
 % Ixx = Sum(mj*(yj^2 + zj^2))
 % Iyy = Sum(mj*(xj^2 + zj^2))
 % Izz = Sum(mj*(xj^2 + yj^2))
@@ -24,14 +23,14 @@ function [result] = momentOfInertia(pm)
     Ixy = 0;
     Ixz = 0;
     Iyz = 0;
-    [j,~] = size(pm);
-    for i = 1:j
-        Ixx = Ixx + pm(i,1)*(pm(i,3)^2 + pm(i,4)^2);
-        Iyy = Iyy + pm(i,1)*(pm(i,2)^2 + pm(i,4)^2);
-        Izz = Izz + pm(i,1)*(pm(i,2)^2 + pm(i,3)^2);
-        Ixy = Ixy + pm(i,1)*pm(i,2)*pm(i,3);
-        Ixz = Ixz + pm(i,1)*pm(i,2)*pm(i,4);
-        Iyz = Iyz + pm(i,1)*pm(i,3)*pm(i,4);
+    [N,~] = size(pm);
+    for j = 1:N
+        Ixx = Ixx + pm(j,1)*(pm(j,3)^2 + pm(j,4)^2);
+        Iyy = Iyy + pm(j,1)*(pm(j,2)^2 + pm(j,4)^2);
+        Izz = Izz + pm(j,1)*(pm(j,2)^2 + pm(j,3)^2);
+        Ixy = Ixy + pm(j,1)*pm(j,2)*pm(j,3);
+        Ixz = Ixz + pm(j,1)*pm(j,2)*pm(j,4);
+        Iyz = Iyz + pm(j,1)*pm(j,3)*pm(j,4);
     end
     result = [
         Ixx, -Ixy, -Ixz;
