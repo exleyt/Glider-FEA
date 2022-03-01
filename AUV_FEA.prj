@@ -1,0 +1,91 @@
+<deployment-project plugin="plugin.apptool" plugin-version="1.0">
+  <configuration build-checksum="1188874799" file="C:\Users\trevy\Documents\MATLAB\Glider-FEA\AUV_FEA.prj" location="C:\Users\trevy\Documents\MATLAB\Glider-FEA" name="AUV_FEA" target="target.mlapps" target-name="Package App">
+    <param.appname>AUV_FEA</param.appname>
+    <param.authnamewatermark>Trevyn Exley</param.authnamewatermark>
+    <param.email>exleyt@oregonstate.edu</param.email>
+    <param.company />
+    <param.icon />
+    <param.icons />
+    <param.summary />
+    <param.description />
+    <param.screenshot>C:\Users\trevy\Desktop\HSS.PNG</param.screenshot>
+    <param.version>1.0</param.version>
+    <param.products.name>
+      <item>MATLAB</item>
+      <item>Control System Toolbox</item>
+      <item>Parallel Computing Toolbox</item>
+      <item>Partial Differential Equation Toolbox</item>
+    </param.products.name>
+    <param.products.id>
+      <item>1</item>
+      <item>3</item>
+      <item>80</item>
+      <item>31</item>
+    </param.products.id>
+    <param.products.version>
+      <item>9.11</item>
+      <item>10.11</item>
+      <item>7.5</item>
+      <item>3.7</item>
+    </param.products.version>
+    <param.platforms />
+    <param.output>${PROJECT_ROOT}</param.output>
+    <param.guid>79909ccd-edb5-4489-bbf1-2893cd378dbd</param.guid>
+    <unset>
+      <param.company />
+      <param.icon />
+      <param.icons />
+      <param.summary />
+      <param.description />
+      <param.version />
+      <param.platforms />
+      <param.output />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\AUV_FEA.mlapp</file>
+    </fileset.main>
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}\addedMassAndDampingMatrices.m</file>
+      <file>${PROJECT_ROOT}\bodyInertiaMatrix.m</file>
+      <file>${PROJECT_ROOT}\excitingForce.m</file>
+      <file>${PROJECT_ROOT}\greenFunction.m</file>
+      <file>${PROJECT_ROOT}\greenFunctionAndPartialXINormal.m</file>
+      <file>${PROJECT_ROOT}\greenFunctionPartialXI.m</file>
+      <file>${PROJECT_ROOT}\hydrostaticRestoringMatrix.m</file>
+      <file>${PROJECT_ROOT}\momentOfInertia.m</file>
+      <file>${PROJECT_ROOT}\normal6DOF.m</file>
+      <file>${PROJECT_ROOT}\surfIntPhiI.m</file>
+      <file>${PROJECT_ROOT}\velocityPotential.m</file>
+      <file>${PROJECT_ROOT}\volumeMoments.m</file>
+      <file>${PROJECT_ROOT}\waterplaneMoments.m</file>
+      <file>${PROJECT_ROOT}\waterplaneTriangulation.m</file>
+    </fileset.depfun>
+    <fileset.resources>
+      <file>${PROJECT_ROOT}\asq</file>
+    </fileset.resources>
+    <fileset.package />
+    <build-deliverables>
+      <file location="C:\Users\trevy\Documents\MATLAB" name="Glider-FEA" optional="false">C:\Users\trevy\Documents\MATLAB\Glider-FEA</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>F:\Program Files\MATLAB\R2021b</root>
+      <toolboxes />
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>
