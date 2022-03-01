@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="1188874799" file="C:\Users\trevy\Documents\MATLAB\Glider-FEA\AUV_FEA.prj" location="C:\Users\trevy\Documents\MATLAB\Glider-FEA" name="AUV_FEA" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="1098297851" file="C:\Users\trevy\Documents\MATLAB\Glider-FEA\AUV_FEA.prj" location="C:\Users\trevy\Documents\MATLAB\Glider-FEA" name="AUV_FEA" target="target.mlapps" target-name="Package App">
     <param.appname>AUV_FEA</param.appname>
     <param.authnamewatermark>Trevyn Exley</param.authnamewatermark>
     <param.email>exleyt@oregonstate.edu</param.email>
@@ -7,7 +7,25 @@
     <param.icon />
     <param.icons />
     <param.summary />
-    <param.description />
+    <param.description>The program requires 3 files to be created before running.
+
+First is an stl file of a single enclosed object (geomertry mesh). This object needs be at or beneath z = 0 (right handed coord with z+ being vertically upwards). This object must also have a flat face at z = 0. It will be used to calculate volume and waterplane moments.
+Second is an stl file of a meshed surface approximating the enclosed object (mesh). This can be done in Fusion 360 by importing the enclosed stl, removing unwanted surfaces, and remeshing the object with uniform triangles. The less triangles, the faster. Aim for the range of 200-1000 triangles.
+Third is a text file that contains a list of point masses. Each line should be in the form "m,x,y,z" where m is the mass of the pointand x,y,z are the coordinates. If you are modeling an imaginary object, remember to define the masses so that the object is floating in equilibrium. V*p = m.
+
+Now you can start project.
+
+The first step is to import your mesh with "Import Mesh." STL files mess up the units/size of their objects so make sure to change "Scale Msh" until the size is right.
+Then set "Gravity" to your favorite approximation and "Period List" to a list of periods you want results for. The periods should be defined using a standard matlab definition. Example: [0] for period of 0 and [1:3] for [1,2,3] and [1,0.5,2] for [1,1.5,2].
+Next click "Calculate phis" and wait for it to finish.
+Now you can "Export phis" to a file that can be loaded for next time. If you "Import phis" remember to still import the mesh file and set gravity for future steps.
+Now press "Import Geometry" and select your geometry mesh. Again change the scale with "Scale Geo" until it matches your mesh size.
+Afterward click "Mesh Geometry." Keep changing the Hmin and Hmax vlaues (Hmin &lt; Hmax) until you get a tight mesh around the object. This mesh can have many triangles, it will not effect runtime as bad as the mesh traingle count will.
+Now set the other "RAO Options" to the values you desire. Note that "Wave Number" = 2pi / "Wavelength" and "Incident theta List" can be defined the same way as the "Period List." Also "[pi]" will convert into [3.14...]
+Before moving on view your geometry mesh with "View Geometry" and change "Waterplane Face Number" to the match your geometry's waterplane face.
+Then press "Calculate RAOs." This will get both the object's Responses and their RAO. 
+The repsonses can be saved with "Export Responses." The format is: the first line has the number of thetas followed by each theta in the order it appears in. The second line has the number of periods followed by each period in the order it appears in. Then each 6 lines afterward is the Response at that theta with with each direction of freedom on a new line. Each indiviual line has the responses for each period in order.
+At anytime you can change the "Incident theta List" to recalculate the RAOs. However, the "Period List" is only used in calculaing phis and is accumulative. In other words you can first calculate the velocity potentials from [1:10] and then add onto that the periods of [3.1:0.1:4.9] for addition information on that part of the graph. If you choose to recalculate phis you will then need to recalculate RAOs too.</param.description>
     <param.screenshot>C:\Users\trevy\Desktop\HSS.PNG</param.screenshot>
     <param.version>1.0</param.version>
     <param.products.name>
@@ -36,7 +54,6 @@
       <param.icon />
       <param.icons />
       <param.summary />
-      <param.description />
       <param.version />
       <param.platforms />
       <param.output />
