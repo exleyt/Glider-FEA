@@ -16,6 +16,5 @@ function [result] = greenFunction(x,xi,K)
     e = 10^-3; % an epsilon value for isolation of the singularity.
     infi = 10; % an approximate infinite upper bound for the integral.
     result = r1 + r2 + 2*K*(asq(R,sx3,K,0,K-e) + ...
-        asq(R,sx3,K,K+e,infi)) - 2*pi*1i*K*exp(K*(x(3) + ...
-        xi(3)))*besselj(0,K*R);
+        asq(R,sx3,K,K+e,infi)) - 2*pi*1i*K*exp(K*sx3)*besselj(0,K*R);
 end
