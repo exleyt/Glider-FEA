@@ -8,11 +8,8 @@ function [FN6] = normal6DOF(CP,FN)
     [N,~] = size(CP);
 
     % Creates each triangle's 6-dimensional normal vector wrt the CP
-    FN6 = zeros(N,3);
+    FN6 = zeros(N,6);
     FN6(:,1:3) = FN(:,:);
     FN6(:,4:6) = cross(CP(:,:),FN(:,:));
-    for j = 1:N
-        FN6(j,4:6) = FN6(j,4:6)/norm(FN6(j,4:6));
-    end
 end
 
