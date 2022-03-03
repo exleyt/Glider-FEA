@@ -32,8 +32,8 @@ function [C] = hydrostaticRestoringMatrix(pm,g,p,model,face)
         0,  0,  0,          0,                  0,                  0;
         0,  0,  0,          0,                  0,                  0;
         0,  0,  Ch,         Ch*CF(2),           -Ch*CF(1),          0;
-        0,  0,  Ch*CF(2),   C44,                -Ch*CF(1)*CF(2),    (W - Fb)*CF(1);
-        0,  0,  -Ch*CF(1),  -Ch*CF(1)*CF(2),    C55,                (W - Fb)*CF(2);
+        0,  0,  Ch*CF(2),   C44,                -Ch*CF(1)*CF(2),    (W*Cg(1) - Fb*CB(1));
+        0,  0,  -Ch*CF(1),  -Ch*CF(1)*CF(2),    C55,                (W*Cg(2) - Fb*CB(2));
         0,  0,  0,          0,                  0,                  0;
     ];
 end
