@@ -9,7 +9,7 @@ function [result] = greenFunctionPartialXI(x,xi,K,j,f)
 % w is the waves angular frequency
 % g is acceleration due to gravity
     e = 10^-2; % epsilon for estimating 
-    xi(j) = xi(j) - e;
+    xi(j) = xi(j) + e;
     fe = greenFunction(x,xi,K);
     result = (fe - f) / e;
 end
