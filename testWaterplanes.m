@@ -7,7 +7,7 @@ classdef testWaterplanes < matlab.unittest.TestCase
     end
  
     methods(TestMethodSetup)
-        function createaModelSqr1(testCase)
+        function createModelSqr1(testCase)
             testCase.ModelSqr1 = createpde();
             W = 1;
             D = 1;
@@ -16,7 +16,7 @@ classdef testWaterplanes < matlab.unittest.TestCase
             generateMesh(testCase.ModelSqr1,'GeometricOrder','linear');
         end
 
-        function createaModelRect243(testCase)
+        function createModelRect243(testCase)
             testCase.ModelRect243 = createpde();
             W = 2;
             D = 4;
