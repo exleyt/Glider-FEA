@@ -2,7 +2,7 @@ function [C] = hydrostaticRestoringMatrix(pm,g,p,model,face)
 % A 6x6 matrix describing the body's hydrostatic restoring force
 %
 % The matrix C is made up of the terms where
-% pointMasses is the matrix of [mjs,pjs]
+% pm is the matrix of [mjs,pjs]
 % mj is the jth point mass
 % pj is the position vector of the jth point mass (xj,yj,zj)
 % g is the acceleration due to gravity
@@ -18,9 +18,7 @@ function [C] = hydrostaticRestoringMatrix(pm,g,p,model,face)
     [CL,P] = waterplaneTriangulation(model.Mesh,face);
     [S,CF,Ixx,Iyy] = waterplaneMoments(CL,P);
     [V,CB] = volumeMoments(model.Mesh);
-
-    m = sum(pm(:,1)); % total mass
-    Cg = sum(pm(:,2:4).*pm(:,1),1)/m; % center of gravity
+    [m,Cg] = massMoments(pm);
 
     Ch = p*g*S; % force per unit distance
     W = m*g; % weight
