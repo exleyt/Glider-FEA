@@ -17,6 +17,6 @@ function [f,df] = greenFunctionAndPartialXINormal(x,xi,FN,K)
         grad(j) = greenFunctionPartialXI(x,xi,K,j,f);
     end
 
-    df = dot(grad, FN);
+    df = dot(real(grad), FN) + 1i*dot(imag(grad), FN);
 end
 
