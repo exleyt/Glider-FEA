@@ -28,12 +28,19 @@ classdef testWaterplanes < matlab.unittest.TestCase
         function defineEpsilon(testCase)
             testCase.epsilon = 1E-6;
         end
+        
+        function addPath(testCase)
+            addpath("..\");
+        end
     end
  
     methods(TestMethodTeardown)
+        function removePath(testCase)
+            rmpath("..\");
+        end
     end
     
-    methods (Test)
+    methods(Test)
         function testWaterplaneTriangulation1(testCase)
             [CL,~] = waterplaneTriangulation(testCase.ModelSqr1.Mesh,2);
             MTO = triangulation(testCase.ModelSqr1.Mesh.Elements.', testCase.ModelSqr1.Mesh.Nodes.');

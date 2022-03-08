@@ -8,12 +8,19 @@ classdef testNormals < matlab.unittest.TestCase
         function defineEpsilon(testCase)
             testCase.epsilon = 1E-6;
         end
+        
+        function addPath(testCase)
+            addpath("..\");
+        end
     end
  
     methods(TestMethodTeardown)
+        function removePath(testCase)
+            rmpath("..\");
+        end
     end
     
-    methods (Test)
+    methods(Test)
         function testNormal6DOF1(testCase)
             [FN6] = normal6DOF([1,1,1],[0,0,0]);
             value = [0,0,0,0,0,0];

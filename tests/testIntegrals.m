@@ -13,12 +13,19 @@ classdef testIntegrals < matlab.unittest.TestCase
         function defineHelper(testCase)
             testCase.helper = testIntegralsHelper;
         end
+        
+        function addPath(testCase)
+            addpath("..\");
+        end
     end
  
     methods(TestMethodTeardown)
+        function removePath(testCase)
+            rmpath("..\");
+        end
     end
     
-    methods (Test)
+    methods(Test)
         function testSurfIntPhiI1(testCase)
             su = 1;
             sv = 1;
