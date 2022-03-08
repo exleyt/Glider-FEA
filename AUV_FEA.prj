@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="1098297851" file="C:\Users\trevy\Documents\MATLAB\Glider-FEA\AUV_FEA.prj" location="C:\Users\trevy\Documents\MATLAB\Glider-FEA" name="AUV_FEA" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="2856709426" file="C:\Users\trevy\Documents\MATLAB\Glider-FEA\AUV_FEA.prj" location="C:\Users\trevy\Documents\MATLAB\Glider-FEA" name="AUV_FEA" target="target.mlapps" target-name="Package App">
     <param.appname>AUV_FEA</param.appname>
     <param.authnamewatermark>Trevyn Exley</param.authnamewatermark>
     <param.email>exleyt@oregonstate.edu</param.email>
@@ -27,7 +27,7 @@ Then press "Calculate RAOs." This will get both the object's Responses and their
 The repsonses can be saved with "Export Responses." The format is: the first line has the number of thetas followed by each theta in the order it appears in. The second line has the number of periods followed by each period in the order it appears in. Then each 6 lines afterward is the Response at that theta with with each direction of freedom on a new line. Each indiviual line has the responses for each period in order.
 At anytime you can change the "Incident theta List" to recalculate the RAOs. However, the "Period List" is only used in calculaing phis and is accumulative. In other words you can first calculate the velocity potentials from [1:10] and then add onto that the periods of [3.1:0.1:4.9] for addition information on that part of the graph. If you choose to recalculate phis you will then need to recalculate RAOs too.</param.description>
     <param.screenshot>C:\Users\trevy\Desktop\HSS.PNG</param.screenshot>
-    <param.version>1.0</param.version>
+    <param.version>2.0</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Control System Toolbox</item>
@@ -54,7 +54,6 @@ At anytime you can change the "Incident theta List" to recalculate the RAOs. How
       <param.icon />
       <param.icons />
       <param.summary />
-      <param.version />
       <param.platforms />
       <param.output />
     </unset>
@@ -63,12 +62,16 @@ At anytime you can change the "Incident theta List" to recalculate the RAOs. How
     </fileset.main>
     <fileset.depfun>
       <file>${PROJECT_ROOT}\addedMassAndDampingMatrices.m</file>
+      <file>${PROJECT_ROOT}\asq.m</file>
+      <file>${PROJECT_ROOT}\asqm.m</file>
+      <file>${PROJECT_ROOT}\asqr.m</file>
       <file>${PROJECT_ROOT}\bodyInertiaMatrix.m</file>
       <file>${PROJECT_ROOT}\excitingForce.m</file>
       <file>${PROJECT_ROOT}\greenFunction.m</file>
       <file>${PROJECT_ROOT}\greenFunctionAndPartialXINormal.m</file>
       <file>${PROJECT_ROOT}\greenFunctionPartialXI.m</file>
       <file>${PROJECT_ROOT}\hydrostaticRestoringMatrix.m</file>
+      <file>${PROJECT_ROOT}\massMoments.m</file>
       <file>${PROJECT_ROOT}\momentOfInertia.m</file>
       <file>${PROJECT_ROOT}\normal6DOF.m</file>
       <file>${PROJECT_ROOT}\surfIntPhiI.m</file>
@@ -78,7 +81,7 @@ At anytime you can change the "Incident theta List" to recalculate the RAOs. How
       <file>${PROJECT_ROOT}\waterplaneTriangulation.m</file>
     </fileset.depfun>
     <fileset.resources>
-      <file>${PROJECT_ROOT}\asq</file>
+      <file>${PROJECT_ROOT}\tests</file>
     </fileset.resources>
     <fileset.package />
     <build-deliverables>
