@@ -361,7 +361,7 @@ classdef testInertias < matlab.unittest.TestCase
             R1 = [x,y,z];
             m = 3;
             pm = [m,R1;
-                m,R1,
+                m,R1;
                 m,R1];
             I = bodyInertiaMatrix(pm);
             value = [[0,-z,y;
