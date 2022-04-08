@@ -1,4 +1,4 @@
-classdef guassianComparisonTests    
+classdef gaussianComparisonTests    
 
     methods (Access = private)
          function [T,CP] = getMesh(self,path)
@@ -86,8 +86,7 @@ classdef guassianComparisonTests
             [~,~,N] = size(T);
             GR = zeros(N,1);
                                      
-            for k = 1:N
-                disp(k)
+            parfor k = 1:N
                 Tk = T(:,:,k);
                 r0 = Tk(1,:);
                 ru = Tk(2,:) - r0;
@@ -341,13 +340,18 @@ classdef guassianComparisonTests
             [~,S] = size(s);
             helper = testIntegralsHelper;
 
-            for K = 0.4
-                GRD = self.getGreenRealDiag(T,CP,K,helper);
-                GR0D = self.getGreenReal0Diag(T,CP,K,helper);
+            K = [1.0071,0.2518,0.1119,0.0629,0.0403];
+            [~,KN] = size(K);
+
+            for k = 1:KN
+                disp(K(k))
+
+                GRD = self.getGreenRealDiag(T,CP,K(k),helper);
+                GR0D = self.getGreenReal0Diag(T,CP,K(k),helper);
 
                 for j = 1:S
-                    GD = self.getGreenEstimateDiag(T,CP,f(:,:,j),w(:,j),s(j),K);
-                    G0D = self.getGreenEstimate0Diag(T,CP,f(:,:,j),w(:,j),s(j),K);
+                    GD = self.getGreenEstimateDiag(T,CP,f(:,:,j),w(:,j),s(j),K(k));
+                    G0D = self.getGreenEstimate0Diag(T,CP,f(:,:,j),w(:,j),s(j),K(k));
                     
                     diff = abs(GD - GRD);
                     diff0 = abs(G0D - GR0D);
