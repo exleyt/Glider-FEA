@@ -76,7 +76,7 @@ classdef gaussianComparisonTests
                     if n ~= k
                         Gv = @(u,v) greenFunction(CP(n,:),r(u,v),K);
                         Gu = @(u) helper.pasq2(Gv,u,0,1-u);
-                        GR = A*helper.pasq(Gu,0,1);
+                        GR(n,k) = A*helper.pasq(Gu,0,1);
                     end
                 end
             end
@@ -94,9 +94,9 @@ classdef gaussianComparisonTests
                 r = @(u,v) u*ru + v*rv + r0;
                 A = norm(cross(ru,rv));
 
-                 Gv = @(u,v) greenFunction(CP(k,:),r(u,v),K);
+                Gv = @(u,v) greenFunction(CP(k,:),r(u,v),K);
                 Gu = @(u) helper.pasq2(Gv,u,0,1-u);
-                GR = A*helper.pasq(Gu,0,1);
+                GR(k) = A*helper.pasq(Gu,0,1);
             end
         end
 
@@ -340,7 +340,7 @@ classdef gaussianComparisonTests
             [~,S] = size(s);
             helper = testIntegralsHelper;
 
-            K = [1.0071,0.2518,0.1119,0.0629,0.0403];
+            K = [1.0071,0.2518,0.0403];
             [~,KN] = size(K);
 
             for k = 1:KN
@@ -353,16 +353,21 @@ classdef gaussianComparisonTests
                     GD = self.getGreenEstimateDiag(T,CP,f(:,:,j),w(:,j),s(j),K(k));
                     G0D = self.getGreenEstimate0Diag(T,CP,f(:,:,j),w(:,j),s(j),K(k));
                     
-                    diff = abs(GD - GRD);
-                    diff0 = abs(G0D - GR0D);
+                    diff = (GD - GRD)./GRD;
+                    diff = abs(real(diff)) + 1i*abs(imag(diff));
+                    diff0 = (G0D - GR0D)./GR0D;
+                    for i = 1:N
+                        diff0(i,i) = 0;
+                    end
+                    diff0 = abs(real(diff0)) + 1i*abs(imag(diff0));
 
-                    avg = sum(sum(diff))/(N*N);
+                    avg = sum(sum(diff))/(N);
                     maxi = max(max(diff));
                     mini = min(min(diff));
 
-                    avg0 = sum(sum(diff0))/(N*N);
+                    avg0 = sum(sum(diff0))/(N*N - N);
                     maxi0 = max(max(diff0));
-                    mini0 = min(min(diff0));
+                    mini0 = min(min(diff0 + diag(zeros(1,N)+100)));
 
                     disp([j,avg,mini,maxi])
                     disp([j,avg0,mini0,maxi0])
