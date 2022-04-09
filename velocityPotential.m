@@ -41,27 +41,37 @@ function [phi] = velocityPotential(Tri,CP,FN,K)
         r3 = [oneSixth*ru + oneSixth*rv; 
               2/3*ru + oneSixth*rv; 
               oneSixth*ru + 2/3*rv] + Tk(1,:);
-        r7 = [0.1012865073235*ru + 0.1012865073235*rv; 
-              0.7974269853531*ru + 0.1012865073235*rv;
-              0.1012865073235*ru + 0.7974269853531*rv;
-              0.4701420641051*ru + 0.0597158717898*rv;
-              0.4701420641051*ru + 0.4701420641051*rv;
-              0.0597158717898*ru + 0.4701420641051*rv;
-              0.3333333333333*ru + 0.3333333333333*rv];
+        r12 = [0.249286745170910*ru + 0.249286745170910*rv;
+               0.249286745170910*ru + 0.501426509658180*rv;
+               0.501426509658180*ru + 0.249286745170910*rv;
+               0.063089014491500*ru + 0.063089014491500*rv;
+               0.063089014491500*ru + 0.873821971017000*rv;
+               0.873821971017000*ru + 0.063089014491500*rv;
+               0.310352451033780*ru + 0.636502499121400*rv;
+               0.636502499121400*ru + 0.053145049844820*rv;
+               0.053145049844820*ru + 0.310352451033780*rv;
+               0.636502499121400*ru + 0.310352451033780*rv;
+               0.310352451033780*ru + 0.053145049844820*rv;
+               0.053145049844820*ru + 0.636502499121400*rv] + Tk(1,:);
         
         % Guassian weights
         w3 = 1/3;
-        w7 = [0.1259391805448;
-            0.1259391805448;
-            0.1259391805448;
-            0.1323941527885;
-            0.1323941527885;
-            0.1323941527885;
-            0.225];
+        w12 = [0.116786275726380;
+               0.116786275726380;
+               0.116786275726380;
+               0.050844906370210;
+               0.050844906370210;
+               0.050844906370210;
+               0.082851075618370;
+               0.082851075618370;
+               0.082851075618370;
+               0.082851075618370;
+               0.082851075618370;
+               0.082851075618370];
         
         % Finds and stores the integral evaluation for each Gnk and Mnk
         for n = 1:N 
-            if n~=k
+            if n ~= k
                 % Sums each guassian function evaulation
                 for m = 1:3
                     [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r3(m,:),FN(k,:),K);
@@ -71,10 +81,10 @@ function [phi] = velocityPotential(Tri,CP,FN,K)
             % More intensive guassian for the case when n=k
             else
                 % Sums each guassian function evaulation
-                for m = 1:7
-                    [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r7(m,:),FN(k,:),K);
-                    Gnks(n,k) = Gnks(n,k) + fg*w7(m);
-                    Mnks(n,k) = Mnks(n,k) + fm*w7(m);
+                for m = 1:12
+                    [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r12(m,:),FN(k,:),K);
+                    Gnks(n,k) = Gnks(n,k) + fg*w12(m);
+                    Mnks(n,k) = Mnks(n,k) + fm*w12(m);
                 end
             end
             Gnks(n,k) = A*Gnks(n,k);
