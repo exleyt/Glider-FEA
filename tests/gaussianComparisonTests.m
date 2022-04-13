@@ -15,7 +15,7 @@ classdef gaussianComparisonTests
 
             CP  = incenter(to);
          end
-        
+
         function [G] = getGreenEstimate0Diag(self,T,CP,f,w,s,K)
             [~,~,N] = size(T);
             G = zeros(N,N);
@@ -100,7 +100,7 @@ classdef gaussianComparisonTests
             end
         end
 
-        function [f,w,s] = getGuassians(self)
+        function [f,w,s] = getGaussians(self)
             f = zeros(20,2,12);
             w = zeros(20,12);
             
@@ -333,11 +333,12 @@ classdef gaussianComparisonTests
     end
 
     methods (Access = public)
-        function runALL(self)
+        % Runs the tests for the selected Gaussians where select is a list
+        %  of the indecies of s to be run
+        function runSelected(self,select)
             [T,CP] = self.getMesh("test_models\sphere mesh.stl");
             [~,~,N] = size(T);
-            [f,w,s] = self.getGuassians();
-            [~,S] = size(s);
+            [f,w,s] = self.getGaussians();
             helper = testIntegralsHelper;
 
             K = [1.0071,0.2518,0.0403];
@@ -349,7 +350,7 @@ classdef gaussianComparisonTests
                 GRD = self.getGreenRealDiag(T,CP,K(k),helper);
                 GR0D = self.getGreenReal0Diag(T,CP,K(k),helper);
 
-                for j = 1:S
+                for j = select
                     GD = self.getGreenEstimateDiag(T,CP,f(:,:,j),w(:,j),s(j),K(k));
                     G0D = self.getGreenEstimate0Diag(T,CP,f(:,:,j),w(:,j),s(j),K(k));
                     
@@ -374,6 +375,17 @@ classdef gaussianComparisonTests
                 end
             end
         end
+
+        function runAll(self)
+            [~,~,s] = self.getGaussians();
+            [~,S] = size(s);
+            self.runSelected(1:S);
+        end
+
+        function runBests(self)
+            self.runSelected([1,5,8,10]);
+        end
+
     end
 end
 
