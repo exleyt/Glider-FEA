@@ -1,7 +1,7 @@
 classdef gaussianComparisonTests    
 
     methods (Access = private)
-         function [T,CP] = getMesh(self,path)
+        function [T,CP] = getMesh(self,path)
             mesh = stlread(path);
             to = triangulation(mesh.ConnectivityList, ...
                 mesh.Points*1E4); %+ [.5,0,0]);
@@ -16,7 +16,7 @@ classdef gaussianComparisonTests
             CP  = incenter(to);
          end
         
-         function [G] = getGreenEstimate0Diag(self,T,CP,f,w,s,K)
+        function [G] = getGreenEstimate0Diag(self,T,CP,f,w,s,K)
             [~,~,N] = size(T);
             G = zeros(N,N);
 
@@ -40,7 +40,7 @@ classdef gaussianComparisonTests
             end
          end
 
-         function [G] = getGreenEstimateDiag(self,T,CP,f,w,s,K)
+        function [G] = getGreenEstimateDiag(self,T,CP,f,w,s,K)
             [~,~,N] = size(T);
             G = zeros(N,1);
 
@@ -333,7 +333,7 @@ classdef gaussianComparisonTests
     end
 
     methods (Access = public)
-        function run(self)
+        function runALL(self)
             [T,CP] = self.getMesh("test_models\sphere mesh.stl");
             [~,~,N] = size(T);
             [f,w,s] = self.getGuassians();
@@ -369,8 +369,8 @@ classdef gaussianComparisonTests
                     maxi0 = max(max(diff0));
                     mini0 = min(min(diff0 + diag(zeros(1,N)+100)));
 
-                    disp([j,avg,mini,maxi])
-                    disp([j,avg0,mini0,maxi0])
+                    fprintf(1,"%d,%f%+fi,%f%+fi,%f%+fi\n",j,real(avg),imag(avg),real(mini),imag(mini),real(maxi),imag(maxi));
+                    fprintf(1,"%d,%f%+fi,%f%+fi,%f%+fi\n",j,real(avg0),imag(avg0),real(mini0),imag(mini0),real(maxi0),imag(maxi0));
                 end
             end
         end
