@@ -1,22 +1,27 @@
 classdef gaussianComparisonTests    
 
     methods (Access = private)
-        function [T,CP] = getMesh(self,path)
+        function [T,CP,FN] = getMesh(self,path)
             mesh = stlread(path);
             to = triangulation(mesh.ConnectivityList, ...
                 mesh.Points*1E4); %+ [.5,0,0]);
+            
+            [T,CP,FN] = self.workMesh(to);
+        end
 
+        function [T,CP,FN] = workMesh(~,mesh)            
             [S,~] = size(mesh.ConnectivityList);
             
             T = zeros(3,3,S);
             for j = 1:S
-                T(:,:,j) = to.Points(to.ConnectivityList(j,:),:);
+                T(:,:,j) = mesh.Points(mesh.ConnectivityList(j,:),:);
             end
+            
+            CP = incenter(mesh);
+            FN = -faceNormal(mesh);
+        end
 
-            CP  = incenter(to);
-         end
-
-        function [G] = getGreenEstimate0Diag(self,T,CP,f,w,s,K)
+        function [G] = getGreenEstimate0Diag(~,T,CP,f,w,s,K)
             [~,~,N] = size(T);
             G = zeros(N,N);
 
@@ -40,7 +45,7 @@ classdef gaussianComparisonTests
             end
          end
 
-        function [G] = getGreenEstimateDiag(self,T,CP,f,w,s,K)
+        function [G] = getGreenEstimateDiag(~,T,CP,f,w,s,K)
             [~,~,N] = size(T);
             G = zeros(N,1);
 
@@ -60,7 +65,7 @@ classdef gaussianComparisonTests
             end
         end
 
-        function [GR] = getGreenReal0Diag(self,T,CP,K,helper)
+        function [GR] = getGreenReal0Diag(~,T,CP,K,helper)
             [~,~,N] = size(T);
             GR = zeros(N,N);
                                      
@@ -82,7 +87,7 @@ classdef gaussianComparisonTests
             end
         end
 
-        function [GR] = getGreenRealDiag(self,T,CP,K,helper)
+        function [GR] = getGreenRealDiag(~,T,CP,K,helper)
             [~,~,N] = size(T);
             GR = zeros(N,1);
                                      
@@ -100,7 +105,55 @@ classdef gaussianComparisonTests
             end
         end
 
-        function [f,w,s] = getGaussians(self)
+        function [df] = greenFunctionPartialXINormal(~,x,xi,FN,K)
+            [~,df] = greenFunctionAndPartialXINormal(x,xi,FN,K);
+        end
+
+        function [M] = getGreenRealM(self,T,CP,FN,K,helper)
+            [~,~,N] = size(T);
+            M = zeros(N,N);
+                                     
+            parfor k = 1:N
+                Tk = T(:,:,k);
+                r0 = Tk(1,:);
+                ru = Tk(2,:) - r0;
+                rv = Tk(3,:) - r0;
+                r = @(u,v) u*ru + v*rv + r0;
+                A = norm(cross(ru,rv));
+                for n = 1:N
+                    Gv = @(u,v) self.greenFunctionPartialXINormal(CP(n,:),r(u,v),FN(k,:),K);
+                    Gu = @(u) helper.pasq2(Gv,u,0,1-u);
+                    M(n,k) = A*helper.pasq(Gu,0,1);
+                end
+            end
+        end
+
+        function [G,M] = getGreenEstimate(~,T,CP,FN,f,w,s,K)
+            [~,~,N] = size(T);
+            G = zeros(N,N);
+            M = zeros(N,N);
+
+            for k = 1:N
+                Tk = T(:,:,k);
+                r0 = Tk(1,:);
+                ru = Tk(2,:) - r0;
+                rv = Tk(3,:) - r0;
+                r = f(:,1)*ru + f(:,2)*rv + r0;
+                A = 0.5*norm(cross(ru,rv));
+
+                for n = 1:N
+                    for m = 1:s
+                        [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r(m,:),FN(k,:),K);
+                        G(n,k) = G(n,k) + fg*w(m);
+                        M(n,k) = M(n,k) + fm*w(m);
+                    end
+                    G(n,k) = G(n,k)*A;
+                    M(n,k) = M(n,k)*A;
+                end
+            end
+        end
+
+        function [f,w,s] = getGaussians(~)
             f = zeros(20,2,12);
             w = zeros(20,12);
             
@@ -330,18 +383,42 @@ classdef gaussianComparisonTests
                         zeros(4,1)];
             s(12) = 16;
         end
+    
+        function [phi] = getVelocityPotential(~,G,M,FN6)
+            [N,~] = size(G);
+            Gsum = zeros(N,6);
+
+            for m = 1:N
+                for n = 1:N
+                    Gsum(m,:) = Gsum(m,:) + G(m,n)*FN6(m,:);
+                end
+                M(m,m) = M(m,m) + 2*pi;
+            end
+
+            phi = zeros(N,6);
+            for j = 1:6
+                phi(:,j) = linsolve(M,Gsum(:,j));
+            end
+        end
     end
 
     methods (Access = public)
         % Runs the tests for the selected Gaussians where select is a list
         %  of the indecies of s to be run
-        function runSelected(self,select)
-            [T,CP] = self.getMesh("test_models\sphere mesh.stl");
+        function runSelectedG(self,select)
+            model = createpde();
+            importGeometry(model,"test_models\sphere geometry.stl");
+            scale(model.Geometry, 0.001);
+            generateMesh(model, 'GeometricOrder','linear','Hmin',0.01,'Hmax',0.1);
+            P = model.Mesh.Nodes(:,model.Mesh.Elements(:,1)).';
+            CL = [1,2,3;2,3,4;3,4,1;4,1,2];
+            
+            [T,CP,~] = self.workMesh(triangulation(CL,P));
             [~,~,N] = size(T);
             [f,w,s] = self.getGaussians();
             helper = testIntegralsHelper;
 
-            K = [1.0071,0.2518,0.0403];
+            K = [1.0071];%,0.2518,0.0403];
             [~,KN] = size(K);
 
             for k = 1:KN
@@ -376,16 +453,127 @@ classdef gaussianComparisonTests
             end
         end
 
-        function runAll(self)
+        function runAllG(self)
             [~,~,s] = self.getGaussians();
             [~,S] = size(s);
-            self.runSelected(1:S);
+            self.runSelectedG(1:S);
         end
 
-        function runBests(self)
-            self.runSelected([1,5,8,10]);
+        function runBestsG(self)
+            self.runSelectedG([1,5,8,10]);
         end
 
+        function runSelectedM(self,select)
+            model = createpde();
+            importGeometry(model,"test_models\sphere geometry.stl");
+            scale(model.Geometry, 0.001);
+            generateMesh(model, 'GeometricOrder','linear','Hmin',0.01,'Hmax',0.1);
+            P = model.Mesh.Nodes(:,model.Mesh.Elements(:,1)).';
+            CL = [1,2,3;2,3,4;3,4,1;4,1,2];
+            
+            [T,CP,FN] = self.workMesh(triangulation(CL,P));
+            [~,~,N] = size(T);
+            [f,w,s] = self.getGaussians();
+            helper = testIntegralsHelper;
+
+            K = [1.0071];%,0.2518,0.0403];
+            [~,KN] = size(K);
+
+            for k = 1:KN
+                disp(K(k))
+
+                MR = self.getGreenRealM(T,CP,FN,K(k),helper);
+                MRD = sum(MR*diag(1 + zeros(1,N)));
+                MR0D = MR*(diag(zeros(1,N) - 1) + 1);
+
+                for j = select
+                    [~,M] = self.getGreenEstimate(T,CP,FN,f(:,:,j),w(:,j),s(j),K(k));
+                    MD = sum(M*diag(1 + zeros(1,N)));
+                    M0D = M*(diag(zeros(1,N) - 1) + 1);
+                    
+                    diff = (MD - MRD)./MRD;
+                    diff = abs(real(diff)) + 1i*abs(imag(diff));
+                    diff0 = (M0D - MR0D)./MR0D;
+                    for i = 1:N
+                        diff0(i,i) = 0;
+                    end
+                    diff0 = abs(real(diff0)) + 1i*abs(imag(diff0));
+
+                    avg = sum(sum(diff))/(N);
+                    maxi = max(max(diff));
+                    mini = min(min(diff));
+
+                    avg0 = sum(sum(diff0))/(N*N - N);
+                    maxi0 = max(max(diff0));
+                    mini0 = min(min(diff0 + diag(zeros(1,N)+100)));
+
+                    fprintf(1,"%d,%f%+fi,%f%+fi,%f%+fi\n",j,real(avg),imag(avg),real(mini),imag(mini),real(maxi),imag(maxi));
+                    fprintf(1,"%d,%f%+fi,%f%+fi,%f%+fi\n",j,real(avg0),imag(avg0),real(mini0),imag(mini0),real(maxi0),imag(maxi0));
+                end
+            end
+        end
+
+        function runAllM(self)
+            [~,~,s] = self.getGaussians();
+            [~,S] = size(s);
+            self.runSelectedM(1:S);
+        end
+
+        function runBestsM(self)
+            self.runSelectedM([1,5,8,10]);
+        end
+
+        function runSelectedFull(self,select)
+            model = createpde();
+            importGeometry(model,"test_models\sphere geometry.stl");
+            scale(model.Geometry, 0.001);
+            generateMesh(model, 'GeometricOrder','linear','Hmin',0.01,'Hmax',0.1);
+            P = model.Mesh.Nodes(:,model.Mesh.Elements(:,1)).';
+            CL = [1,2,3;2,3,4;3,4,1;4,1,2];
+
+            [T,CP,FN] = self.workMesh(triangulation(CL,P));
+            FN6 = normal6DOF(CP,FN);
+            [~,~,N] = size(T);
+            [f,w,s] = self.getGaussians();
+            helper = testIntegralsHelper;
+
+            K = [1.0071];%,0.2518,0.0403];
+            [~,KN] = size(K);
+
+            for k = 1:KN
+                disp(K(k))
+
+                GRD = self.getGreenRealDiag(T,CP,K(k),helper);
+                GR0D = self.getGreenReal0Diag(T,CP,K(k),helper);
+                GR = diag(GRD) + GR0D;
+                MR = self.getGreenRealM(T,CP,FN,K(k),helper);
+                
+                phiR = self.getVelocityPotential(GR,MR,FN6); % (N,6)
+
+                for j = select
+                    [G,M] = self.getGreenEstimate(T,CP,FN,f(:,:,j),w(:,j),s(j),K(k));
+                    phi = self.getVelocityPotential(G,M,FN6); % (N,6)
+
+                    diff = (phiR - phi)./phiR;
+                    diff = abs(real(diff)) + 1i*abs(imag(diff));
+                    avg = sum(sum(diff))/(N*6);
+                    maxi = max(max(diff));
+                    mini = min(min(diff));
+                    
+                    fprintf(1,"%d,%f%+fi,%f%+fi,%f%+fi\n",j,real(avg),imag(avg),real(mini),imag(mini),real(maxi),imag(maxi));
+                end
+            end
+        end
+
+        function runAllFull(self)
+            [~,~,s] = self.getGaussians();
+            [~,S] = size(s);
+            self.runSelectedFull(1:S);
+        end
+
+        function runBestsFull(self)
+            self.runSelectedFull([1,5,8,10]);
+        end
     end
 end
 
