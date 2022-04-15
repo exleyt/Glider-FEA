@@ -10,13 +10,7 @@ function [f,df] = greenFunctionAndPartialXINormal(x,xi,FN,K)
 % w is the waves angular frequency
 % g is acceleration due to gravity
     f = greenFunction(x,xi,K); % the green function evaluated at xi
-    
-    % Finds the xi gradient of f
-    grad = zeros(3,1);
-    for j = 1:3
-        grad(j) = greenFunctionPartialXI(x,xi,K,j,f);
-    end
-
-    df = dot(real(grad), FN) + 1i*dot(imag(grad), FN);
+    e = 10^-6; % epsilon for estimating 
+    fe = greenFunction(x,xi + e*FN,K);
+    df = (fe - f) / e; 
 end
-
