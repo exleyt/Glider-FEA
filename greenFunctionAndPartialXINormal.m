@@ -12,5 +12,5 @@ function [f,df] = greenFunctionAndPartialXINormal(x,xi,FN,K)
     f = greenFunction(x,xi,K); % the green function evaluated at xi
     e = 10^-6; % epsilon for estimating 
     fe = greenFunction(x,xi + e*FN,K);
-    df = (fe - f) / e; 
+    df = (fe - f)/e; 
 end
