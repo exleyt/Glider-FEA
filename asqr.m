@@ -19,7 +19,7 @@ function [result] = asqr(R,sx3,K,a,fa,m,fm,b,fb,whole,e,d)
     if abs(delta) <= 15 * e
         result = left + right + delta / 15;
     % Returns a result if max depth is surpassed
-    elseif d >= 20 % A maximum depth for asq estimation.
+    elseif d >= 30 % A maximum depth for asq estimation.
         result = left + right + delta / 15;
     else
         % Recurse for the left side of the bounds

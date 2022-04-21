@@ -7,6 +7,6 @@ function [result] = asq(R,sx3,K,a,b)
     fa = besselj(0,a*R)*exp(a*sx3)/(a-K);
     fb = besselj(0,b*R)*exp(b*sx3)/(b-K);
     [m,fm,whole] = asqm(R,sx3,K,a,fa,b,fb);
-    e = 10^-2; % an error value for asq estimation.
+    e = 10^-4; % an error value for asq estimation.
     result = asqr(R,sx3,K,a,fa,m,fm,b,fb,whole,e,0);
 end
