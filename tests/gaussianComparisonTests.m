@@ -21,7 +21,7 @@ classdef gaussianComparisonTests
             FN = -faceNormal(mesh);
         end
 
-        function [G] = getGreenEstimate0Diag(~,T,CP,f,w,s,K)
+        function [G] = getGreenEstimateG(~,T,CP,f,w,s,K)
             [~,~,N] = size(T);
             G = zeros(N,N);
 
@@ -43,31 +43,11 @@ classdef gaussianComparisonTests
                     end
                 end
             end
-         end
-
-        function [G] = getGreenEstimateDiag(~,T,CP,f,w,s,K)
-            [~,~,N] = size(T);
-            G = zeros(N,1);
-
-            for k = 1:N
-                Tk = T(:,:,k);
-                r0 = Tk(1,:);
-                ru = Tk(2,:) - r0;
-                rv = Tk(3,:) - r0;
-                r = f(:,1)*ru + f(:,2)*rv + r0;
-                A = 0.5*norm(cross(ru,rv));
-
-                for m = 1:s
-                    [fg] = greenFunction(CP(k,:),r(m,:),K);
-                    G(k) = G(k) + fg*w(m);
-                end
-                G(k) = G(k)*A;
-            end
         end
 
-        function [GR] = getGreenReal0Diag(~,T,CP,K,helper)
+        function [G] = getGreenRealG(~,T,CP,K,helper)
             [~,~,N] = size(T);
-            GR = zeros(N,N);
+            G = zeros(N,N);
                                      
             parfor k = 1:N
                 Tk = T(:,:,k);
@@ -81,27 +61,9 @@ classdef gaussianComparisonTests
                     if n ~= k
                         Gv = @(u,v) greenFunction(CP(n,:),r(u,v),K);
                         Gu = @(u) helper.pasq2(Gv,u,0,1-u);
-                        GR(n,k) = A*helper.pasq(Gu,0,1);
+                        G(n,k) = A*helper.pasq(Gu,0,1);
                     end
                 end
-            end
-        end
-
-        function [GR] = getGreenRealDiag(~,T,CP,K,helper)
-            [~,~,N] = size(T);
-            GR = zeros(N,1);
-                                     
-            parfor k = 1:N
-                Tk = T(:,:,k);
-                r0 = Tk(1,:);
-                ru = Tk(2,:) - r0;
-                rv = Tk(3,:) - r0;
-                r = @(u,v) u*ru + v*rv + r0;
-                A = norm(cross(ru,rv));
-
-                Gv = @(u,v) greenFunction(CP(k,:),r(u,v),K);
-                Gu = @(u) helper.pasq2(Gv,u,0,1-u);
-                GR(k) = A*helper.pasq(Gu,0,1);
             end
         end
 
@@ -121,9 +83,13 @@ classdef gaussianComparisonTests
                 r = @(u,v) u*ru + v*rv + r0;
                 A = norm(cross(ru,rv));
                 for n = 1:N
-                    Gv = @(u,v) self.greenFunctionPartialXINormal(CP(n,:),r(u,v),FN(k,:),K);
-                    Gu = @(u) helper.pasq2(Gv,u,0,1-u);
-                    M(n,k) = A*helper.pasq(Gu,0,1);
+                    if n ~= k
+                        Gv = @(u,v) self.greenFunctionPartialXINormal(CP(n,:),r(u,v),FN(k,:),K);
+                        Gu = @(u) helper.pasq2(Gv,u,0,1-u);
+                        M(n,k) = A*helper.pasq(Gu,0,1);
+                    else
+                        M(n,k) = 2*pi;
+                    end
                 end
             end
         end
@@ -142,13 +108,17 @@ classdef gaussianComparisonTests
                 A = 0.5*norm(cross(ru,rv));
 
                 for n = 1:N
-                    for m = 1:s
-                        [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r(m,:),FN(k,:),K);
-                        G(n,k) = G(n,k) + fg*w(m);
-                        M(n,k) = M(n,k) + fm*w(m);
+                    if k ~= n
+                        for m = 1:s
+                            [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r(m,:),FN(k,:),K);
+                            G(n,k) = G(n,k) + fg*w(m);
+                            M(n,k) = M(n,k) + fm*w(m);
+                        end
+                        G(n,k) = G(n,k)*A;
+                        M(n,k) = M(n,k)*A;
+                    else
+                        M(n,k) = 2*pi;
                     end
-                    G(n,k) = G(n,k)*A;
-                    M(n,k) = M(n,k)*A;
                 end
             end
         end
@@ -390,9 +360,8 @@ classdef gaussianComparisonTests
 
             for m = 1:N
                 for n = 1:N
-                    Gsum(m,:) = Gsum(m,:) + G(m,n)*FN6(m,:);
+                    Gsum(m,:) = Gsum(m,:) + G(m,n)*FN6(m,:);                     
                 end
-                M(m,m) = M(m,m) + 2*pi;
             end
 
             phi = zeros(N,6);
@@ -418,37 +387,22 @@ classdef gaussianComparisonTests
             [f,w,s] = self.getGaussians();
             helper = testIntegralsHelper;
 
-            K = [1.0071];%,0.2518,0.0403];
-            [~,KN] = size(K);
+            K = [1.0071,0.2518,0.0403];
 
-            for k = 1:KN
-                disp(K(k))
-
-                GRD = self.getGreenRealDiag(T,CP,K(k),helper);
-                GR0D = self.getGreenReal0Diag(T,CP,K(k),helper);
+            for k = K
+                GR = self.getGreenRealG(T,CP,k,helper);
 
                 for j = select
-                    GD = self.getGreenEstimateDiag(T,CP,f(:,:,j),w(:,j),s(j),K(k));
-                    G0D = self.getGreenEstimate0Diag(T,CP,f(:,:,j),w(:,j),s(j),K(k));
+                    G = self.getGreenEstimateG(T,CP,f(:,:,j),w(:,j),s(j),k);
                     
-                    diff = (GD - GRD)./GRD;
+                    diff = (G - GR)./GR;
                     diff = abs(real(diff)) + 1i*abs(imag(diff));
-                    diff0 = (G0D - GR0D)./GR0D;
-                    for i = 1:N
-                        diff0(i,i) = 0;
-                    end
-                    diff0 = abs(real(diff0)) + 1i*abs(imag(diff0));
 
-                    avg = sum(sum(diff))/(N);
+                    avg = sum(sum(diff))/(N*N - N); % Not counting the diags
                     maxi = max(max(diff));
-                    mini = min(min(diff));
+                    mini = min(min(diff + diag(zeros(1,N) + 100)));
 
-                    avg0 = sum(sum(diff0))/(N*N - N);
-                    maxi0 = max(max(diff0));
-                    mini0 = min(min(diff0 + diag(zeros(1,N)+100)));
-
-                    fprintf(1,"%d,%f%+fi,%f%+fi,%f%+fi\n",j,real(avg),imag(avg),real(mini),imag(mini),real(maxi),imag(maxi));
-                    fprintf(1,"%d,%f%+fi,%f%+fi,%f%+fi\n",j,real(avg0),imag(avg0),real(mini0),imag(mini0),real(maxi0),imag(maxi0));
+                    fprintf(1,"%d,%f,%f%+fi,%f%+fi,%f%+fi\n",j,k,real(avg),imag(avg),real(mini),imag(mini),real(maxi),imag(maxi));
                 end
             end
         end
@@ -476,39 +430,22 @@ classdef gaussianComparisonTests
             [f,w,s] = self.getGaussians();
             helper = testIntegralsHelper;
 
-            K = [1.0071];%,0.2518,0.0403];
-            [~,KN] = size(K);
+            K = [1.0071,0.2518,0.0403];
 
-            for k = 1:KN
-                disp(K(k))
-
-                MR = self.getGreenRealM(T,CP,FN,K(k),helper);
-                MRD = sum(MR*diag(1 + zeros(1,N)));
-                MR0D = MR*(diag(zeros(1,N) - 1) + 1);
+            for k = K
+                MR = self.getGreenRealM(T,CP,FN,k,helper);
 
                 for j = select
-                    [~,M] = self.getGreenEstimate(T,CP,FN,f(:,:,j),w(:,j),s(j),K(k));
-                    MD = sum(M*diag(1 + zeros(1,N)));
-                    M0D = M*(diag(zeros(1,N) - 1) + 1);
+                    [~,M] = self.getGreenEstimate(T,CP,FN,f(:,:,j),w(:,j),s(j),k);
                     
-                    diff = (MD - MRD)./MRD;
+                    diff = (M - MR)./MR;
                     diff = abs(real(diff)) + 1i*abs(imag(diff));
-                    diff0 = (M0D - MR0D)./MR0D;
-                    for i = 1:N
-                        diff0(i,i) = 0;
-                    end
-                    diff0 = abs(real(diff0)) + 1i*abs(imag(diff0));
 
-                    avg = sum(sum(diff))/(N);
+                    avg = sum(sum(diff))/(N*N - N); % Not counting the diags
                     maxi = max(max(diff));
-                    mini = min(min(diff));
+                    mini = min(min(diff + diag(zeros(1,N) + 100)));
 
-                    avg0 = sum(sum(diff0))/(N*N - N);
-                    maxi0 = max(max(diff0));
-                    mini0 = min(min(diff0 + diag(zeros(1,N)+100)));
-
-                    fprintf(1,"%d,%f%+fi,%f%+fi,%f%+fi\n",j,real(avg),imag(avg),real(mini),imag(mini),real(maxi),imag(maxi));
-                    fprintf(1,"%d,%f%+fi,%f%+fi,%f%+fi\n",j,real(avg0),imag(avg0),real(mini0),imag(mini0),real(maxi0),imag(maxi0));
+                    fprintf(1,"%d,%f,%f%+fi,%f%+fi,%f%+fi\n",j,k,real(avg),imag(avg),real(mini),imag(mini),real(maxi),imag(maxi));
                 end
             end
         end
@@ -522,58 +459,5 @@ classdef gaussianComparisonTests
         function runBestsM(self)
             self.runSelectedM([1,5,8,10]);
         end
-
-        function runSelectedFull(self,select)
-            model = createpde();
-            importGeometry(model,"test_models\sphere geometry.stl");
-            scale(model.Geometry, 0.001);
-            generateMesh(model, 'GeometricOrder','linear','Hmin',0.01,'Hmax',0.1);
-            P = model.Mesh.Nodes(:,model.Mesh.Elements(:,1)).';
-            CL = [1,2,3;2,3,4;3,4,1;4,1,2];
-
-            [T,CP,FN] = self.workMesh(triangulation(CL,P));
-            FN6 = normal6DOF(CP,FN);
-            [~,~,N] = size(T);
-            [f,w,s] = self.getGaussians();
-            helper = testIntegralsHelper;
-
-            K = [1.0071];%,0.2518,0.0403];
-            [~,KN] = size(K);
-
-            for k = 1:KN
-                disp(K(k))
-
-                GRD = self.getGreenRealDiag(T,CP,K(k),helper);
-                GR0D = self.getGreenReal0Diag(T,CP,K(k),helper);
-                GR = diag(GRD) + GR0D;
-                MR = self.getGreenRealM(T,CP,FN,K(k),helper);
-                
-                phiR = self.getVelocityPotential(GR,MR,FN6); % (N,6)
-
-                for j = select
-                    [G,M] = self.getGreenEstimate(T,CP,FN,f(:,:,j),w(:,j),s(j),K(k));
-                    phi = self.getVelocityPotential(G,M,FN6); % (N,6)
-
-                    diff = (phiR - phi)./phiR;
-                    diff = abs(real(diff)) + 1i*abs(imag(diff));
-                    avg = sum(sum(diff))/(N*6);
-                    maxi = max(max(diff));
-                    mini = min(min(diff));
-                    
-                    fprintf(1,"%d,%f%+fi,%f%+fi,%f%+fi\n",j,real(avg),imag(avg),real(mini),imag(mini),real(maxi),imag(maxi));
-                end
-            end
-        end
-
-        function runAllFull(self)
-            [~,~,s] = self.getGaussians();
-            [~,S] = size(s);
-            self.runSelectedFull(1:S);
-        end
-
-        function runBestsFull(self)
-            self.runSelectedFull([1,5,8,10]);
-        end
     end
 end
-
