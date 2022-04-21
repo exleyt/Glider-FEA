@@ -430,7 +430,7 @@ classdef gaussianComparisonTests
                         zeros(4,1)];
             s(12) = 16;
         end
-    
+
         function [phi] = getVelocityPotential(~,G,M,FN6)
             [N,~] = size(G);
             Gsum = zeros(N,6);
