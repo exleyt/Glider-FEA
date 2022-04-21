@@ -70,8 +70,8 @@ classdef gaussianComparisonTests
         end
 
         function [f,df] = getGreenAndPartialXINormal0(self,x,xi,FN)
-            f = self.getGreen0(x,xi); % the green function evaluated at xi
-            e = 10^-6; % epsilon for estimating 
+            f = self.getGreen0(x,xi);
+            e = 10^-20; % epsilon for estimating 
             fe = self.getGreen0(x,xi + e*FN);
             df = (fe - f)/e; 
         end
@@ -480,7 +480,7 @@ classdef gaussianComparisonTests
             G = zeros(N,N);
             M = zeros(N,N);
 
-            for k = 1:N
+            parfor k = 1:N
                 Tk = T(:,:,k);
                 r0 = Tk(1,:);
                 ru = Tk(2,:) - r0;
@@ -618,7 +618,7 @@ classdef gaussianComparisonTests
                 [G,M] = self.getGreenEstimate0(T,CP,FN,f(:,:,j),w(:,j),s(j));
                 phi = self.getVelocityPotential(G,M,FN6); % (N,6)
 
-                diff = (phiR - phi)./phiR;
+                diff = (phiR - phi)./(phiR + 1E-20);
                 diff = abs(real(diff)) + 1i*abs(imag(diff));
                 avg = sum(sum(diff))/(N*6);
                 maxi = max(max(diff));
