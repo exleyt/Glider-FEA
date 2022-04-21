@@ -1,5 +1,5 @@
 classdef testIntegralsHelper  
-    methods (Access = public)
+    methods (Access = private)
         function [result] = pasq(self,f,a,b)
             fa = f(a);
             fb = f(b);
@@ -8,23 +8,9 @@ classdef testIntegralsHelper
             result = self.pasqr(f,a,fa,m,fm,b,fb,whole,e,0);
         end 
 
-        function [result] = pasq2(self,f,u,a,b)
-            fa = f(u,a);
-            fb = f(u,b);
-            [m,fm,whole] = self.pasqm2(f,u,a,fa,b,fb);
-            e = 1E-2;
-            result = self.pasqr2(f,u,a,fa,m,fm,b,fb,whole,e,0);
-        end
-
         function [m,fm,whole] = pasqm(~,f,a,fa,b,fb)
             m = (a + b)/2;
             fm = f(m);
-            whole = abs(b - a)*(fa + 4*fm + fb)/6;
-        end
-
-        function [m,fm,whole] = pasqm2(~,f,u,a,fa,b,fb)
-            m = (a + b)/2;
-            fm = f(u,m);
             whole = abs(b - a)*(fa + 4*fm + fb)/6;
         end
 
@@ -39,20 +25,6 @@ classdef testIntegralsHelper
             else
                 result = self.pasqr(f,a,fa,lm,flm,m,fm,left,e/2,d+1);
                 result = result + self.pasqr(f,m,fm,rm,frm,b,fb,right,e/2,d+1); 
-            end
-        end
-
-        function [result] = pasqr2(self,f,u,a,fa,m,fm,b,fb,whole,e,d)
-            [lm,flm,left] = self.pasqm2(f,u,a,fa,m,fm);
-            [rm,frm,right] = self.pasqm2(f,u,m,fm,b,fb);
-            delta = left + right - whole;
-            if abs(delta) <= 15 * e
-                result = left + right + delta / 15;
-            elseif d >= 20
-                result = left + right + delta / 15;
-            else
-                result = self.pasqr2(f,u,a,fa,lm,flm,m,fm,left,e/2,d+1);
-                result = result + self.pasqr2(f,u,m,fm,rm,frm,b,fb,right,e/2,d+1); 
             end
         end
     end

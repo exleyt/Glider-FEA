@@ -1,6 +1,62 @@
 classdef gaussianComparisonTests    
 
     methods (Access = private)
+        function [result] = pasq(self,f,a,b)
+            fa = f(a);
+            fb = f(b);
+            [m,fm,whole] = self.pasqm(f,a,fa,b,fb);
+            e = 1E-2;
+            result = self.pasqr(f,a,fa,m,fm,b,fb,whole,e,0);
+        end 
+
+        function [result] = pasq2(self,f,u,a,b)
+            fa = f(u,a);
+            fb = f(u,b);
+            [m,fm,whole] = self.pasqm2(f,u,a,fa,b,fb);
+            e = 1E-2;
+            result = self.pasqr2(f,u,a,fa,m,fm,b,fb,whole,e,0);
+        end
+
+        function [m,fm,whole] = pasqm(~,f,a,fa,b,fb)
+            m = (a + b)/2;
+            fm = f(m);
+            whole = abs(b - a)*(fa + 4*fm + fb)/6;
+        end
+
+        function [m,fm,whole] = pasqm2(~,f,u,a,fa,b,fb)
+            m = (a + b)/2;
+            fm = f(u,m);
+            whole = abs(b - a)*(fa + 4*fm + fb)/6;
+        end
+
+        function [result] = pasqr(self,f,a,fa,m,fm,b,fb,whole,e,d)
+            [lm,flm,left] = self.pasqm(f,a,fa,m,fm);
+            [rm,frm,right] = self.pasqm(f,m,fm,b,fb);
+            delta = left + right - whole;
+            if abs(delta) <= 15 * e
+                result = left + right + delta / 15;
+            elseif d >= 20
+                result = left + right + delta / 15;
+            else
+                result = self.pasqr(f,a,fa,lm,flm,m,fm,left,e/2,d+1);
+                result = result + self.pasqr(f,m,fm,rm,frm,b,fb,right,e/2,d+1); 
+            end
+        end
+
+        function [result] = pasqr2(self,f,u,a,fa,m,fm,b,fb,whole,e,d)
+            [lm,flm,left] = self.pasqm2(f,u,a,fa,m,fm);
+            [rm,frm,right] = self.pasqm2(f,u,m,fm,b,fb);
+            delta = left + right - whole;
+            if abs(delta) <= 15 * e
+                result = left + right + delta / 15;
+            elseif d >= 20
+                result = left + right + delta / 15;
+            else
+                result = self.pasqr2(f,u,a,fa,lm,flm,m,fm,left,e/2,d+1);
+                result = result + self.pasqr2(f,u,m,fm,rm,frm,b,fb,right,e/2,d+1); 
+            end
+        end
+
         function [T,CP,FN] = getMesh(self,path)
             mesh = stlread(path);
             to = triangulation(mesh.ConnectivityList, ...
@@ -45,7 +101,7 @@ classdef gaussianComparisonTests
             end
         end
 
-        function [G] = getGreenRealG(~,T,CP,K,helper)
+        function [G] = getGreenRealG(~,T,CP,K)
             [~,~,N] = size(T);
             G = zeros(N,N);
                                      
@@ -60,18 +116,18 @@ classdef gaussianComparisonTests
                 for n = 1:N
                     if n ~= k
                         Gv = @(u,v) greenFunction(CP(n,:),r(u,v),K);
-                        Gu = @(u) helper.pasq2(Gv,u,0,1-u);
-                        G(n,k) = A*helper.pasq(Gu,0,1);
+                        Gu = @(u) self.pasq2(Gv,u,0,1-u);
+                        G(n,k) = A*self.pasq(Gu,0,1);
                     end
                 end
             end
         end
 
-        function [df] = greenFunctionPartialXINormal(~,x,xi,FN,K)
+        function [df] = getGreenPartialXINormal(~,x,xi,FN,K)
             [~,df] = greenFunctionAndPartialXINormal(x,xi,FN,K);
         end
 
-        function [M] = getGreenRealM(self,T,CP,FN,K,helper)
+        function [M] = getGreenRealM(self,T,CP,FN,K)
             [~,~,N] = size(T);
             M = zeros(N,N);
                                      
@@ -84,9 +140,9 @@ classdef gaussianComparisonTests
                 A = norm(cross(ru,rv));
                 for n = 1:N
                     if n ~= k
-                        Gv = @(u,v) self.greenFunctionPartialXINormal(CP(n,:),r(u,v),FN(k,:),K);
-                        Gu = @(u) helper.pasq2(Gv,u,0,1-u);
-                        M(n,k) = A*helper.pasq(Gu,0,1);
+                        Gv = @(u,v) self.getGreenPartialXINormal(CP(n,:),r(u,v),FN(k,:),K);
+                        Gu = @(u) self.pasq2(Gv,u,0,1-u);
+                        M(n,k) = A*self.pasq(Gu,0,1);
                     else
                         M(n,k) = 2*pi;
                     end
@@ -385,12 +441,11 @@ classdef gaussianComparisonTests
             [T,CP,~] = self.workMesh(triangulation(CL,P));
             [~,~,N] = size(T);
             [f,w,s] = self.getGaussians();
-            helper = testIntegralsHelper;
 
             K = [1.0071,0.2518,0.0403];
 
             for k = K
-                GR = self.getGreenRealG(T,CP,k,helper);
+                GR = self.getGreenRealG(T,CP,k);
 
                 for j = select
                     G = self.getGreenEstimateG(T,CP,f(:,:,j),w(:,j),s(j),k);
@@ -428,12 +483,11 @@ classdef gaussianComparisonTests
             [T,CP,FN] = self.workMesh(triangulation(CL,P));
             [~,~,N] = size(T);
             [f,w,s] = self.getGaussians();
-            helper = testIntegralsHelper;
 
             K = [1.0071,0.2518,0.0403];
 
             for k = K
-                MR = self.getGreenRealM(T,CP,FN,k,helper);
+                MR = self.getGreenRealM(T,CP,FN,k);
 
                 for j = select
                     [~,M] = self.getGreenEstimate(T,CP,FN,f(:,:,j),w(:,j),s(j),k);
