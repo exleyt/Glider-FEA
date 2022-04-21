@@ -1,5 +1,5 @@
 classdef testIntegralsHelper  
-    methods (Access = private)
+    methods (Access = public)
         function [result] = pasq(self,f,a,b)
             fa = f(a);
             fb = f(b);
