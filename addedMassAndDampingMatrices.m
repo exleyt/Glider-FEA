@@ -1,4 +1,4 @@
-function [A,B] = addedMassAndDampingMatrices(Tri,phi,FN,p,w)
+function [D] = addedMassAndDampingMatrices(Tri,phi,FN,p)
 % Calculates the added mass coefficient and damping coefficient matrices
 % 
 % The added mass coefficient matrix is the real component of V
@@ -12,7 +12,7 @@ function [A,B] = addedMassAndDampingMatrices(Tri,phi,FN,p,w)
 % w is the gliders angular frequency
     [~,N] = size(phi);
 
-    V = zeros(6,6);
+    D = zeros(6,6);
     for k = 1:N
         % Parameterized triangle s.t. r = r0 + ru*u + rv*v
         r0 = Tri(1,:,k);
@@ -27,7 +27,7 @@ function [A,B] = addedMassAndDampingMatrices(Tri,phi,FN,p,w)
 
             % Simple integral for i:[1,3] s.t. n(i) = FN(k,i) 
             for i = 1:3
-               V(i,j) = V(i,j) + Apphi*FN(k,i);
+               D(i,j) = D(i,j) + Apphi*FN(k,i);
             end
 
             % Less simple integral for i:[4,6] s.t. n(i) = n0 + nu*u + nv*v 
@@ -40,10 +40,8 @@ function [A,B] = addedMassAndDampingMatrices(Tri,phi,FN,p,w)
                 nu = FN(k,a)*ru(b) - FN(k,b)*ru(a);
                 nv = FN(k,a)*rv(b) - FN(k,b)*rv(a);
                                         
-                V(i,j) = V(i,j) + Apphi*(n0 + (nu + nv)/3);
+                D(i,j) = D(i,j) + Apphi*(n0 + (nu + nv)/3);
             end
         end
     end
-    A = real(V);
-    B = -imag(V)*w;
 end
