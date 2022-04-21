@@ -41,33 +41,9 @@ function [phi] = velocityPotential(Tri,CP,FN,K)
         r3 = [oneSixth*ru + oneSixth*rv; 
               2/3*ru + oneSixth*rv; 
               oneSixth*ru + 2/3*rv] + Tk(1,:);
-        r12 = [0.249286745170910*ru + 0.249286745170910*rv;
-               0.249286745170910*ru + 0.501426509658180*rv;
-               0.501426509658180*ru + 0.249286745170910*rv;
-               0.063089014491500*ru + 0.063089014491500*rv;
-               0.063089014491500*ru + 0.873821971017000*rv;
-               0.873821971017000*ru + 0.063089014491500*rv;
-               0.310352451033780*ru + 0.636502499121400*rv;
-               0.636502499121400*ru + 0.053145049844820*rv;
-               0.053145049844820*ru + 0.310352451033780*rv;
-               0.636502499121400*ru + 0.310352451033780*rv;
-               0.310352451033780*ru + 0.053145049844820*rv;
-               0.053145049844820*ru + 0.636502499121400*rv] + Tk(1,:);
         
         % Guassian weights
         w3 = 1/3;
-        w12 = [0.116786275726380;
-               0.116786275726380;
-               0.116786275726380;
-               0.050844906370210;
-               0.050844906370210;
-               0.050844906370210;
-               0.082851075618370;
-               0.082851075618370;
-               0.082851075618370;
-               0.082851075618370;
-               0.082851075618370;
-               0.082851075618370];
         
         % Finds and stores the integral evaluation for each Gnk and Mnk
         for n = 1:N 
@@ -78,17 +54,11 @@ function [phi] = velocityPotential(Tri,CP,FN,K)
                     Gnks(n,k) = Gnks(n,k) + fg*w3;
                     Mnks(n,k) = Mnks(n,k) + fm*w3;
                 end
-            % More intensive guassian for the case when n=k
+                Gnks(n,k) = A*Gnks(n,k);
+                Mnks(n,k) = A*Mnks(n,k);
             else
-                % Sums each guassian function evaulation
-                for m = 1:12
-                    [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r12(m,:),FN(k,:),K);
-                    Gnks(n,k) = Gnks(n,k) + fg*w12(m);
-                    Mnks(n,k) = Mnks(n,k) + fm*w12(m);
-                end
+                Mnks(n,k) = 2*pi;
             end
-            Gnks(n,k) = A*Gnks(n,k);
-            Mnks(n,k) = A*Mnks(n,k);
         end
     end
 
@@ -100,8 +70,6 @@ function [phi] = velocityPotential(Tri,CP,FN,K)
             % Sums Gnks*nk for each n at each dimension 
             Gnks_sum(n,:) = Gnks_sum(n,:) + Gnks(n,k) * FN6(k,:);
         end
-        % Adds 2pi to each Mnk where k=n
-        Mnks(n,n) = Mnks(n,n) + 2*pi;
     end
     
     % Solves the linear equation Sum(Mnk*phijk,k:[1,n]) = Gnks_sumnj for
