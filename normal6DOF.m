@@ -12,4 +12,3 @@ function [FN6] = normal6DOF(CP,FN)
     FN6(:,1:3) = FN(:,:);
     FN6(:,4:6) = cross(CP(:,:),FN(:,:));
 end
-
