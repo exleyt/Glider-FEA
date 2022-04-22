@@ -1,4 +1,4 @@
-function [D] = addedMassAndDampingMatrices(Tri,phi,FN,p)
+function [D] = addedMassAndDampingMatrices(Tri,phi,FN6,p)
 % Calculates the added mass coefficient and damping coefficient matrices
 % 
 % The added mass coefficient matrix is the real component of V
@@ -19,29 +19,18 @@ function [D] = addedMassAndDampingMatrices(Tri,phi,FN,p)
         ru = Tri(2,:,k) - r0;
         rv = Tri(3,:,k) - r0;
 
-        % Area of traingle bounded by ru and rv * p
-        Ap = 0.5*norm(cross(ru,rv))*p;
+        % Area of traingle bounded by ru and rv
+        A = 0.5*norm(cross(ru,rv));
 
         for j = 1:6
-            Apphi = Ap*phi(j,k);
+            Aphi = A*phi(j,k);
 
             % Simple integral for i:[1,3] s.t. n(i) = FN(k,i) 
-            for i = 1:3
-               D(i,j) = D(i,j) + Apphi*FN(k,i);
-            end
-
-            % Less simple integral for i:[4,6] s.t. n(i) = n0 + nu*u + nv*v 
-            for i = 4:6
-                a = mod(i + 1,3) + 1;   % 3,1,2
-                b = mod(i,3) + 1;       % 2,3,1
-
-                 % n0 + nu*u + nv*v
-                n0 = FN(k,a)*r0(b) - FN(k,b)*r0(a);
-                nu = FN(k,a)*ru(b) - FN(k,b)*ru(a);
-                nv = FN(k,a)*rv(b) - FN(k,b)*rv(a);
-                                        
-                D(i,j) = D(i,j) + Apphi*(n0 + (nu + nv)/3);
+            for i = 1:6
+               D(i,j) = D(i,j) + Aphi*FN6(k,i);
             end
         end
     end
+
+    D = p*D;
 end
