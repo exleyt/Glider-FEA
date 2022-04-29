@@ -38,21 +38,21 @@ function [phi] = velocityPotential(Tri,CP,FN,K)
         oneSixth = 1/6;
         
         % The guassian points to evaluate at
-        r3 = [oneSixth*ru + oneSixth*rv; 
+        r = [oneSixth*ru + oneSixth*rv; 
               2/3*ru + oneSixth*rv; 
               oneSixth*ru + 2/3*rv] + Tk(1,:);
         
         % Guassian weights
-        w3 = 1/3;
+        w = 1/3;
         
         % Finds and stores the integral evaluation for each Gnk and Mnk
         for n = 1:N 
             if n ~= k
                 % Sums each guassian function evaulation
                 for m = 1:3
-                    [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r3(m,:),FN(k,:),K);
-                    Gnks(n,k) = Gnks(n,k) + fg*w3;
-                    Mnks(n,k) = Mnks(n,k) + fm*w3;
+                    [fg,fm] = greenFunctionAndPartialXINormal(CP(n,:),r(m,:),FN(k,:),K);
+                    Gnks(n,k) = Gnks(n,k) + fg*w;
+                    Mnks(n,k) = Mnks(n,k) + fm*w;
                 end
                 Gnks(n,k) = A*Gnks(n,k);
                 Mnks(n,k) = A*Mnks(n,k);
