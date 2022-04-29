@@ -18,5 +18,5 @@ function [V,CB] = volumeMoments(mesh)
         CB = CB + tetraV*tetraCP;
     end
 
-    CB = CB/V;
+    CB = CB.'/V;
 end
