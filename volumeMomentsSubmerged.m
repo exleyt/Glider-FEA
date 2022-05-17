@@ -7,8 +7,7 @@ function [VS,CB] = volumeMomentsSubmerged(CL,P,VE)
 
     [N,~] = size(CL);
     for i = 1:N
-        e = CL(i,:);
-        tetra = P(e,:);
+        tetra = P(CL(i,:),:);
 
         sgn = sign(tetra(:,3));
         num0 = sum(ismember(0,tetra(:,3))); % number of points on z = 0
