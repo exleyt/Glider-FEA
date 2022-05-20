@@ -56,7 +56,7 @@ function [TO] = getSurfaceSubmerged(CL,P,EP)
                 CLE(cli,:) = [CL(i,ai),di,ei];
                 cli = cli + 1;
             end           
-        elseif sumsgn == 0 && num0 ~= 3
+        elseif sumsgn == 0 && num0 == 1
             [~,ai] = ismember(0,sgn); % index of the z = 0 point
             bi = mod(ai,3) + 1;
             ci = mod(bi,3) + 1;
@@ -74,11 +74,13 @@ function [TO] = getSurfaceSubmerged(CL,P,EP)
                 di = pi;
                 pi = pi + 1;
             end
-            CLE(cli,:) = [CL(i,ai),CL(i,bi),di];
-            cli = cli + 1;
-            CLE(cli,:) = [CL(i,ai),di,CL(i,ci)];
-            cli = cli + 1;
-
+            if sgn(bi) == -1
+                CLE(cli,:) = [CL(i,ai),CL(i,bi),di];
+                cli = cli + 1;
+            else
+                CLE(cli,:) = [CL(i,ai),di,CL(i,ci)];
+                cli = cli + 1;
+            end
         end
     end
     CLN = CLE(1:cli-1,:);
