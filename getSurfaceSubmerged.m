@@ -20,8 +20,8 @@ function [TO] = getSurfaceSubmerged(CL,P,EP)
             cli = cli + 1;
         elseif sumsgn == -1 || (sumsgn == 1 && num0 == 0) % 2 above/below waterline
             [~,ai] = ismember(-sign(sumsgn),sgn); % index of the lone point
-            [~,bi] = ismember(sign(sumsgn),sgn); % index of the other two
-            [~,ci] = ismember(sign(sumsgn),sgn); % index of the other two
+            bi = mod(ai,3) + 1;
+            ci = mod(bi,3) + 1;
             a = tri(ai,:);
             b = tri(bi,:);
             c = tri(ci,:);
@@ -50,19 +50,19 @@ function [TO] = getSurfaceSubmerged(CL,P,EP)
             if sumsgn == -1 
                 CLE(cli,:) = [CL(i,bi),CL(i,ci),di];
                 cli = cli + 1;
-                CLE(cli,:) = [CL(i,ci),di,ei];
+                CLE(cli,:) = [CL(i,ci),ei,di]; % order matters for normals
                 cli = cli + 1;
             else            
                 CLE(cli,:) = [CL(i,ai),di,ei];
                 cli = cli + 1;
             end           
         elseif sumsgn == 0 && num0 ~= 3
-            [~,ai] = ismember(1,sgn); % index of the above point
-            [~,bi] = ismember(-1,sgn); % index of the below point
-            [~,ci] = ismember(0,sgn); % index of the z = 0 point
-            a = tri(ai,:);
+            [~,ai] = ismember(0,sgn); % index of the z = 0 point
+            bi = mod(ai,3) + 1;
+            ci = mod(bi,3) + 1;
             b = tri(bi,:);
-            d = findZeros(a,b);
+            c = tri(ci,:);
+            d = findZeros(b,c);
             di = -1; % index of d in PE, not tri/CL like a,b,c
             for j = nP + 1:pi - 1 % loops over all added PEs
                 if norm(d - PE(j,:)) < EP
@@ -74,14 +74,18 @@ function [TO] = getSurfaceSubmerged(CL,P,EP)
                 di = pi;
                 pi = pi + 1;
             end
+            CLE(cli,:) = [CL(i,ai),CL(i,bi),di];
+            cli = cli + 1;
+            CLE(cli,:) = [CL(i,ai),di,CL(i,ci)];
+            cli = cli + 1;
 
-            CLE(cli,:) = [CL(i,ai),CL(i,ci),di];
-            cli = cli + 1;
-            CLE(cli,:) = [CL(i,bi),CL(i,ci),di];
-            cli = cli + 1;
         end
     end
     CLN = CLE(1:cli-1,:);
     PN = PE(1:pi-1,:);
-    TO = triangulation(CLN,PN);
+    try
+        TO = triangulation(CLN,PN);
+    catch
+        TO = [];
+    end
 end 
