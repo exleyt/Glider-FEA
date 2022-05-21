@@ -1,4 +1,4 @@
-function [PN,VSN,CB] = moveDepth(CL,P,VE,VT,EP)
+function [PN,CB] = moveDepth(CL,P,VE,VT,EP)
 % Moves the object mesh (CL,P) vertically until the volume below z = 0
 %  is equal to VT. VE is an ordered list of volumes of each element in CL 
 %  and EP is the target accuracy/epsilon.
@@ -8,7 +8,6 @@ function [PN,VSN,CB] = moveDepth(CL,P,VE,VT,EP)
     % New/current loop values
     dVN = VS - VT; % negative delta volume
     PN = P;
-    VSN = VS;
 
     while abs(dVN) > EP
         PN = PN + sign(dVN)*[0,0,1*10^E]; % translate by 1*10^E
