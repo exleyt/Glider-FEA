@@ -1,4 +1,4 @@
-function [C] = hydrostaticRestoringMatrix(pm,g,p,model,mesh)
+function [C] = hydrostaticRestoringMatrix(pm,g,p,V,CB,mesh)
 % A 6x6 matrix describing the body's hydrostatic restoring force
 %
 % The matrix C is made up of the terms where
@@ -7,11 +7,11 @@ function [C] = hydrostaticRestoringMatrix(pm,g,p,model,mesh)
 % pj is the position vector of the jth point mass (xj,yj,zj)
 % g is the acceleration due to gravity
 % p is the water density
-% model is a meshed pdemodel
+% V is the submerged volume
+% CB is the center of buoyancy
 % mesh is a triangulation object of the model
     FN = -faceNormal(mesh);
     [S,Sx,Sy,Sxy,Sxx,Syy] = waterplaneMoments(mesh.ConnectivityList,mesh.Points,FN);
-    [V,CB] = volumeMoments(model.Mesh);
     [m,Cg] = massMoments(pm);
 
     pg = p*g;
