@@ -91,28 +91,28 @@ classdef testVolumes < matlab.unittest.TestCase
 
          function testVolumeMoments5(testCase)
             [~,CB] = volumeMoments(testCase.ModelSqr1.Mesh);
-            value = [0;0;0.5];
+            value = [0,0,0.5];
 
             testCase.verifyLessThan(abs(CB-value),testCase.epsilon);
         end
 
         function testVolumeMoments6(testCase)
             [~,CB] = volumeMoments(testCase.ModelRect243.Mesh);
-            value = [0;0;1.5];
+            value = [0,0,1.5];
 
             testCase.verifyLessThan(abs(CB-value),testCase.epsilon);
         end
         
         function testVolumeMoments7(testCase)
             [~,CB] = volumeMoments(testCase.ModelSphere1Off1.Mesh);
-            value = [1;1;1];
+            value = [1,1,1];
 
             testCase.verifyLessThan(abs(CB-value),5E-3);
         end
 
         function testVolumeMoments8(testCase)
             [~,CB] = volumeMoments(testCase.ModelSphere2Offn2.Mesh);
-            value = -[2;2;2];
+            value = -[2,2,2];
 
             testCase.verifyLessThan(abs(CB-value),5E-3);
         end

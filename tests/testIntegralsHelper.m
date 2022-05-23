@@ -4,7 +4,7 @@ classdef testIntegralsHelper
             fa = f(a);
             fb = f(b);
             [m,fm,whole] = self.pasqm(f,a,fa,b,fb);
-            e = 1E-2;
+            e = 1E-6;
             result = self.pasqr(f,a,fa,m,fm,b,fb,whole,e,0);
         end 
 

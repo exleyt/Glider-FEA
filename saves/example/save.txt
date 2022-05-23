@@ -1,0 +1,8 @@
+Object File Name=Glider.stl
+Object File Scale=1.0000000000
+Mesh Hmax=0.0800000000
+Mesh Hmin=0.0500000000
+Submerged Surface File Name=SurfaceMesh.stl
+Point Masses File Name=Masses.txt
+Point Masses Offset=[0.00000000000000000000,0.00000000000000000000,0.12044000000000085193]
+Point Masses Angular Offset=[0.00000000000000000000,0.18386343792730239222,0.00000000000000000000]

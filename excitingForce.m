@@ -1,4 +1,4 @@
-function [F] = excitingForce(T,phi,FN,p,k,g,theta)
+function [F] = excitingForce(T,phi,FN6,p,K,g,theta)
 % Calculates the vector of exciting forces on the glider
 %
 % Calculates the surface integral of -i*w*p*(n(j)*phiI - phi(j)*dphiI/dn)
@@ -24,44 +24,28 @@ function [F] = excitingForce(T,phi,FN,p,k,g,theta)
         n = norm(cross(ru,rv));
 
         % e^s1
-        s0 = k*(r0(3) - 1i*(r0(1)*cost + r0(2)*sint));
+        s0 = K*(r0(3) - 1i*(r0(1)*cost + r0(2)*sint));
         % e^su*u
-        su = k*(ru(3) - 1i*(ru(1)*cost + ru(2)*sint));
+        su = K*(ru(3) - 1i*(ru(1)*cost + ru(2)*sint));
         % e^sv*v
-        sv = k*(rv(3) - 1i*(rv(1)*cost + rv(2)*sint));
+        sv = K*(rv(3) - 1i*(rv(1)*cost + rv(2)*sint));
 
         exps1 = exp(s0);
         
         % Integral of [1,u,v]*e^(su*u)*e^(sv*v)dvdu s.t. u:[0,1] v:[0,1-u]
-        [a1,au,av] = surfIntPhiI(su,sv);  
+        [a1,~,~] = surfIntPhiI(su,sv);  
 
         % Parts that factor out of the integral
         sF = n*exps1;
         % A part of dphiI/dn that is independed of (u,v) and doesn't factor
-        SphiI = k*(FN(m,1)*cost + FN(m,2)*sint + 1i*FN(m,3));
+        SphiI = K*(FN6(m,1)*cost + FN6(m,2)*sint + 1i*FN6(m,3));
 
         % Factors out of whole integral for j:[1,3]
         sF13 = sF*a1;
         
         % Simple integral for j:[1,3] s.t. n(j) = N(m,j)
-        for j = 1:3
-            F(j) = F(j) + sF13*(1i*FN(m,j) - phi(j,m)*SphiI);
-        end
-
-        % Factors out of whole integral for j:[4,6]
-        sF46 = 1i*sF;
-
-        % Less simple integral for j:[4,6] s.t. n(j) = n0 + nu*u + nv*v
-        for j = 4:6
-            a = mod(j + 1,3) + 1;   % 3,1,2
-            b = mod(j,3) + 1;       % 2,3,1
-
-            % n0 + nu*u + nv*v
-            n0 = FN(m,a)*r0(b) - FN(m,b)*r0(a);
-            nu = FN(m,a)*ru(b) - FN(m,b)*ru(a);
-            nv = FN(m,a)*rv(b) - FN(m,b)*rv(a);
-
-            F(j) = F(j) + sF46*(n0*a1 + nu*au + nv*av) - sF13*phi(j,m)*SphiI;
+        for j = 1:6
+            F(j) = F(j) + sF13*(1i*FN6(m,j) - phi(j,m)*SphiI);
         end
     end
     
