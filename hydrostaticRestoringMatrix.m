@@ -1,35 +1,39 @@
-function [C] = hydrostaticRestoringMatrix(pm,g)
+function [C] = hydrostaticRestoringMatrix(pm,g,p,V,CB,mesh)
 % A 6x6 matrix describing the body's hydrostatic restoring force
 %
-% The matrix C is made up of the terms, Cij s.t.
-% C44 = p*g*V*yb - m*g*yg
-% C45 = -g*(p*V*xb - m*xg)
-% C65 = -g*(p*V*zb - m*zg)
-% C66 = p*g*V*yb = m*g*yg
-% p is the water density
+% The matrix C is made up of the terms where
+% pm is the matrix of [mjs,pjs]
+% mj is the jth point mass
+% pj is the position vector of the jth point mass (xj,yj,zj)
 % g is the acceleration due to gravity
-% V is the displaced volume
-% center of gravity, cog is [xg,yg,zg]
-% center of buoyancy, cob is [xb,yb,zb]
-% m is the total glider's mass
-%
-% This is from a textbook where it is assumed that the origin is the center
-%  of flotation which it very much is not as currently defined
-    [N,~] = size(pm);    
+% p is the water density
+% V is the submerged volume
+% CB is the center of buoyancy
+% mesh is a triangulation object of the model
+    FN = -faceNormal(mesh);
+    [S,Sx,Sy,Sxy,Sxx,Syy] = waterplaneMoments(mesh.ConnectivityList,mesh.Points,FN);
+    [m,Cg] = massMoments(pm);
 
-    cog = zeros(3,1); 
-    for j = 1:3
-        cog(j) = sum(pm(1:N,j+1)) / N;
-    end
+    pg = p*g;
+    W = m*g; % weight
+    Fb = pg*V; % buoyancy force
+    Fd = Fb*CB - W*Cg;
 
-    m = sum(pm(1:N,1));
+    C33 = pg*S;
+    C34 = pg*Sy;
+    C35 = -pg*Sx;
+    C44 = pg*Syy + Fd(3);
+    C45 = -pg*Sxy;
+    C46 = -Fb*CB(1) + W*Cg(3);
+    C55 = pg*Sxx + Fd(3);
+    C56 = -Fd(2);
 
-    % This is only right if the center of buoyancy is at (0,0,0)
-    % In other words it is not right
-    C = zeros(6,6);
-    C(4,4) = -m*g*cog(2);
-    C(4,5) = g*m*cog(1);
-    C(6,5) = g*m*cog(3);
-    C(6,6) = -m*g*cog(2);
+    C = [
+        0,  0,  0,      0,      0,          0;
+        0,  0,  0,      0,      0,          0;
+        0,  0,  C33,    C34,    C35,        0;
+        0,  0,  C34,    C44,    C45,        C46;
+        0,  0,  C35,    C45,    C55,        C56;
+        0,  0,  0,      0,      0,          0;
+    ];
 end
-

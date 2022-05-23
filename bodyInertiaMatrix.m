@@ -10,26 +10,19 @@ function [result] = bodyInertiaMatrix(pm)
 %   mzg     0       -mxg    I21     I22     I23
 %   -myg    mgx     0       I31     I32     I33
 % ] Where:
-% pointMasses is the matrix of [mjs,pjs]
+% pm is the matrix of [mjs,pjs]
 % mj is the jth point mass
 % pj is the position vector of the jth point mass (xj,yj,zj)
-% the center of gravity vector (cog) is [xg, yg, zg]
+% the center of gravity vector (Cg) is [xg, yg, zg]
 % I is the 3x3 moment of inertia matrix
-    [j,~] = size(pm);     
+    [m,Cg] = massMoments(pm);
     
-    cog = zeros(3,1); 
-    for i = 1:3
-        cog(i) = sum(pm(1:j,i+1)) / j;
-    end
-    
-    m = sum(pm(1:j,1));
-
     M = diag([m,m,m]);
 
     A = [
-        0, m*cog(3), -m*cog(2);
-        -m*cog(3), 0, m*cog(1);
-        m*cog(2), -m*cog(1), 0;
+        0, m*Cg(3), -m*Cg(2);
+        -m*Cg(3), 0, m*Cg(1);
+        m*Cg(2), -m*Cg(1), 0;
     ];
 
     I = momentOfInertia(pm);

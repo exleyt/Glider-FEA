@@ -38,7 +38,7 @@ function [a1,au,av] = surfIntPhiI(su,sv)
         av = ((sv^2 - 2*sv + 2)*exp(sv) - 2)/(2*sv^3);
     else
         % Integral of e^(su*u)*e^(sv*v)dvdu s.t. u:[0,1] v:[0,1-u]; equ1
-        a1 = (exp(su)*sv - su*(exp(sv) - 1) - sv)/(su^2*(su - sv)); 
+        a1 = (exp(su)*sv - su*(exp(sv) - 1) - sv)/(su*sv*(su - sv)); 
         % Integral of u*e^(su*u)*e^(sv*v)dvdu s.t. u:[0,1] v:[0,1-u]; equ2
         au = ((su^2 - su*(sv + 2) + sv)*exp(su)*sv + su^2*(exp(sv) - 1) + 2*su*sv - sv^2)/(su^2*(su-sv)^2*sv);
         % Integral of v*e^(su*u)*e^(sv*v)dvdu s.t. u:[0,1] v:[0,1-u]; equ3
