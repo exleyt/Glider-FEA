@@ -26,12 +26,14 @@ classdef testExcitingForces < matlab.unittest.TestCase
             g = 9.81;
             k = 0.5;
             p = 1026; 
+            CP = [1/3,1/3,1/3];
             FN = [0,0,0];
+            FN6 = normal6DOF(CP,FN);
             phi = [1;1;1;1;1;1];
             Tri = [1,0,0;
                    0,1,0;
                    0,0,1];
-            [F] = excitingForce(Tri,phi,FN,p,k,g,theta);
+            [F] = excitingForce(Tri,phi,FN6,p,k,g,theta);
             value = [0,0,0,0,0,0];
 
             testCase.verifyLessThan(abs(F - value),testCase.epsilon)
@@ -42,12 +44,14 @@ classdef testExcitingForces < matlab.unittest.TestCase
             g = 0;
             k = 0.5;
             p = 1026; 
+            CP = [1/3,1/3,1/3];
             FN = [1,1,1]/norm([1,1,1]);
+            FN6 = normal6DOF(CP,FN);
             phi = [1;1;1;1;1;1];
             Tri = [1,0,0;
                    0,1,0;
                    0,0,1];
-            [F] = excitingForce(Tri,phi,FN,p,k,g,theta);
+            [F] = excitingForce(Tri,phi,FN6,p,k,g,theta);
             value = [0,0,0,0,0,0];
 
             testCase.verifyLessThan(abs(F - value),testCase.epsilon)
@@ -57,13 +61,15 @@ classdef testExcitingForces < matlab.unittest.TestCase
             theta = pi/4;
             g = 9.8;
             k = 0.5;
-            p = 0; 
+            p = 0;
+            CP = [1/3,1/3,1/3];
             FN = [1,1,1]/norm([1,1,1]);
+            FN6 = normal6DOF(CP,FN);
             phi = [1;1;1;1;1;1];
             Tri = [1,0,0;
                    0,1,0;
                    0,0,1];
-            [F] = excitingForce(Tri,phi,FN,p,k,g,theta);
+            [F] = excitingForce(Tri,phi,FN6,p,k,g,theta);
             value = [0,0,0,0,0,0];
 
             testCase.verifyLessThan(abs(F - value),testCase.epsilon)
@@ -74,12 +80,14 @@ classdef testExcitingForces < matlab.unittest.TestCase
             g = 9.8;
             k = 0;
             p = 1026; 
+            CP = [1/3,1/3,0];
             FN = [2,5,4]/norm([2,5,4]);
+            FN6 = normal6DOF(CP,FN);
             phi = [1;1;1;1;1;1];
             Tri = [1,0,0;
                    0,0,0;
                    0,1,0];
-            [F] = excitingForce(Tri,phi,FN,p,k,g,theta);
+            [F] = excitingForce(Tri,phi,FN6,p,k,g,theta);
             value = [FN(1)*0.5;
                      FN(2)*0.5;
                      FN(3)*0.5;
@@ -95,12 +103,14 @@ classdef testExcitingForces < matlab.unittest.TestCase
             g = 9.8;
             k = 0;
             p = 1026; 
+            CP = [1/3,1/3,1/3];
             FN = [1,1,1]/norm([1,1,1]);
+            FN6 = normal6DOF(CP,FN);
             phi = [1;1;1;1;1;1];
             Tri = [1,0,0;
                    0,0,1;
                    0,1,0];
-            [F] = excitingForce(Tri,phi,FN,p,k,g,theta);
+            [F] = excitingForce(Tri,phi,FN6,p,k,g,theta);
             value = [FN(1)*0.8660254037844389;
                      FN(2)*0.8660254037844389;
                      FN(3)*0.8660254037844389;
@@ -116,12 +126,14 @@ classdef testExcitingForces < matlab.unittest.TestCase
             g = 9.8;
             k = 0;
             p = 1026; 
+            CP = [1/3,1/3,1/3];
             FN = [2,4,3]/norm([2,4,3]);
+            FN6 = normal6DOF(CP,FN);
             phi = [1;2;3;4;5;6];
             Tri = [1,0,0;
                    0,0,1;
                    0,1,0];
-            [F] = excitingForce(Tri,phi,FN,p,k,g,theta);
+            [F] = excitingForce(Tri,phi,FN6,p,k,g,theta);
 
             r0 = Tri(1,:);
             ru = Tri(2,:) - r0;
@@ -147,12 +159,14 @@ classdef testExcitingForces < matlab.unittest.TestCase
             g = 9.8;
             k = 0.6;
             p = 1026; 
+            CP = [1/3,1/3,1/3];
             FN = [2,4,3]/norm([2,4,3]);
+            FN6 = normal6DOF(CP,FN);
             phi = [1;2;3;4;5;6];
             Tri = [1,0,0;
                    0,0,1;
                    0,1,0];
-            [F] = excitingForce(Tri,phi,FN,p,k,g,theta);
+            [F] = excitingForce(Tri,phi,FN6,p,k,g,theta);
 
             r0 = Tri(1,:);
             ru = Tri(2,:) - r0;
@@ -178,12 +192,14 @@ classdef testExcitingForces < matlab.unittest.TestCase
             g = 9.8;
             k = 0.6;
             p = 1026; 
+            CP = [1/3,1/3,1/3];
             FN = [2,4,3]/norm([2,4,3]);
+            FN6 = normal6DOF(CP,FN);
             phi = [1;2;3;4;5;6];
             Tri = [1,0,0;
                    0,0,1;
                    0,1,0];
-            [F] = excitingForce(Tri,phi,FN,p,k,g,theta);
+            [F] = excitingForce(Tri,phi,FN6,p,k,g,theta);
 
             r0 = Tri(1,:);
             ru = Tri(2,:) - r0;
@@ -214,12 +230,14 @@ classdef testExcitingForces < matlab.unittest.TestCase
             g = 9.8;
             k = 0.26;
             p = 1026; 
+            CP = [1/3,1/3,1/3];
             FN = [2,6,3]/norm([2,6,3]);
+            FN6 = normal6DOF(CP,FN);
             phi = [1;2;3;4;5;6];
             Tri = [1,0,0;
                    0,0,1;
                    0,1,0];
-            [F] = excitingForce(Tri,phi,FN,p,k,g,theta);
+            [F] = excitingForce(Tri,phi,FN6,p,k,g,theta);
 
             r0 = Tri(1,:);
             ru = Tri(2,:) - r0;

@@ -36,16 +36,14 @@ function [F] = excitingForce(T,phi,FN6,p,K,g,theta)
         [a1,~,~] = surfIntPhiI(su,sv);  
 
         % Parts that factor out of the integral
-        sF = n*exps1;
+        sF = n*exps1*a1;
+
         % A part of dphiI/dn that is independed of (u,v) and doesn't factor
         SphiI = K*(FN6(m,1)*cost + FN6(m,2)*sint + 1i*FN6(m,3));
-
-        % Factors out of whole integral for j:[1,3]
-        sF13 = sF*a1;
         
         % Simple integral for j:[1,3] s.t. n(j) = N(m,j)
         for j = 1:6
-            F(j) = F(j) + sF13*(1i*FN6(m,j) - phi(j,m)*SphiI);
+            F(j) = F(j) + sF*(1i*FN6(m,j) - phi(j,m)*SphiI);
         end
     end
     

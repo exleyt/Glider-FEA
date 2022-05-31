@@ -10,36 +10,39 @@ function [VS,CB] = volumeMomentsSubmerged(CL,P,VE)
         tetra = P(CL(i,:),:);
 
         sgn = sign(tetra(:,3));
-        num0 = sum(ismember(0,tetra(:,3))); % number of points on z = 0
+        num0 =  sum(sgn(:) == 0); % number of points on z = 0
         sumsgn = sum(sgn);
         if sumsgn == -4 || sumsgn == -3 || (sumsgn == -2 && num0 == 2) ...
         || (sumsgn == -1 && num0 == 3) % all below or at waterline
             tetraCP = sum(tetra)/4;
             tetraV = VE(i);
         elseif sumsgn == -2 || sumsgn == -1 || (sumsgn == 2 && num0 == 0) ...
-        || (sumsgn == 1 && num0 == 1) || (sumsgn == 0 && num0 == 2)% three below waterline
+        || (sumsgn == 1 && num0 == 1) || (sumsgn == 0 && num0 == 2) % one/three below waterline
             tri = zeros(3,3); % x,y,z cols
             if sumsgn == 0
                 sumsgn = -1; % have to remove the positive volume
             end
             [~,loner] = ismember(-sign(sumsgn),sgn); % index of the lone point
             c = 1; % tri index counter
-            tetraCP = 0;
-            for j = 1:4
+            for j = 1:4 % builds waterplane triangle
                 if j ~= loner
                     tri(c,:) = findZeros(tetra(loner,:), tetra(j,:));
-                    tetraCP = tetraCP + tetra(j,:) + tri(c,:);
                     c = c + 1;
                 end
             end
-            tetraCP = tetraCP/6;
 
+            lonerV = volumeTetrahedron([tetra(loner,:);tri]);
+            lonerCP = sum([tetra(loner,:);tri])/4;
             if sumsgn < 0
                 % Volume of element tetra - volume of waterplane tetra
-                tetraV = VE(i) - volumeTetrahedron([tetra(loner,:);tri]);
+                tetraV = VE(i) - lonerV;
+                totalCP = sum(tetra)/4;
+                % Weighted sum of COM treating the loner as negative volume
+                tetraCP = (VE(i)*totalCP - lonerV*lonerCP)/tetraV;
             else
                 % Volume of underwaterplane tetra
-                tetraV = volumeTetrahedron([tetra(loner,:);tri]);
+                tetraV = lonerV;
+                tetraCP = lonerCP;
             end
         elseif sumsgn == 0 % two below waterline
             [~,ai1] = ismember(1,sgn); % index of a point above z = 0
@@ -56,13 +59,16 @@ function [VS,CB] = volumeMomentsSubmerged(CL,P,VE)
             p2 = findZeros(a2,b1);
             p3 = findZeros(a2,b2);
             p4 = findZeros(a1,b2);
-            tetraCP = (p1 + p2 + p3 + p4 + b1 + b2) / 6; % cp of waterline vertices
-            tetraV = volumeTetrahedron([b1;p1;p2;p4]) + ...
-                     volumeTetrahedron([b1;p2;p3;p4]) + ...
-                     volumeTetrahedron([b1;b2;p3;p4]);
+            V1 = volumeTetrahedron([b1;p1;p2;p4]); % tetras' volume and centroid
+            CP1 = (b1 + p1 + p2 + p4)/4;
+            V2 = volumeTetrahedron([b1;p2;p3;p4]);
+            CP2 = (b1 + p2 + p3 + p4)/4;
+            V3 = volumeTetrahedron([b1;b2;p3;p4]);
+            CP3 = (b1 + b2 + p3 + p4)/4;
+            tetraV = V1 + V2 + V3; % final shape's volume
+            tetraCP = (V1*CP1 + V2*CP2 + V3*CP3)/tetraV; % final shape's centroid
         else
-            tetraV = 0;
-            tetraCP = 0;
+            continue
         end
 
         VS = VS + tetraV;
