@@ -24,7 +24,7 @@ function [VS,CB] = volumeMomentsSubmerged(CL,P,VE)
             end
             [~,loner] = ismember(-sign(sumsgn),sgn); % index of the lone point
             c = 1; % tri index counter
-            for j = 1:4
+            for j = 1:4 % builds waterplane triangle
                 if j ~= loner
                     tri(c,:) = findZeros(tetra(loner,:), tetra(j,:));
                     c = c + 1;
@@ -59,17 +59,16 @@ function [VS,CB] = volumeMomentsSubmerged(CL,P,VE)
             p2 = findZeros(a2,b1);
             p3 = findZeros(a2,b2);
             p4 = findZeros(a1,b2);
-            V1 = volumeTetrahedron([b1;p1;p2;p4]);
+            V1 = volumeTetrahedron([b1;p1;p2;p4]); % tetras' volume and centroid
             CP1 = (b1 + p1 + p2 + p4)/4;
             V2 = volumeTetrahedron([b1;p2;p3;p4]);
             CP2 = (b1 + p2 + p3 + p4)/4;
             V3 = volumeTetrahedron([b1;b2;p3;p4]);
             CP3 = (b1 + b2 + p3 + p4)/4;
-            tetraV = V1 + V2 + V3;
-            tetraCP = (V1*CP1 + V2*CP2 + V3*CP3)/tetraV;
+            tetraV = V1 + V2 + V3; % final shape's volume
+            tetraCP = (V1*CP1 + V2*CP2 + V3*CP3)/tetraV; % final shape's centroid
         else
-            tetraV = 0;
-            tetraCP = 0;
+            continue
         end
 
         VS = VS + tetraV;
