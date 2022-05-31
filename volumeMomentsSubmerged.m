@@ -10,7 +10,7 @@ function [VS,CB] = volumeMomentsSubmerged(CL,P,VE)
         tetra = P(CL(i,:),:);
 
         sgn = sign(tetra(:,3));
-        num0 = sum(ismember(0,tetra(:,3))); % number of points on z = 0
+        num0 =  sum(sgn(:) == 0); % number of points on z = 0
         sumsgn = sum(sgn);
         if sumsgn == -4 || sumsgn == -3 || (sumsgn == -2 && num0 == 2) ...
         || (sumsgn == -1 && num0 == 3) % all below or at waterline
