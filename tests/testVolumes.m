@@ -128,38 +128,10 @@ classdef testVolumes < matlab.unittest.TestCase
             [V,~] = volumeMomentsSubmerged(CL,P,VE);
             value = sum(VE);
 
-            testCase.verifyLessThan(abs(V-value),5E-3);
+            testCase.verifyLessThan(abs(V-value),testCase.epsilon);
         end
 
         function testvolumeMomentsSubmerged2(testCase)
-            CL = testCase.ModelSphere2Offn2.Mesh.Elements.';
-            P = testCase.ModelSphere2Offn2.Mesh.Nodes.';
-            [~,N] = size(testCase.ModelSphere2Offn2.Mesh.Elements);
-            VE = zeros(1,N); % List of volumes for each element
-            for j = 1:N
-                VE(j) = volume(testCase.ModelSphere2Offn2.Mesh,j);
-            end
-            [~,CB] = volumeMomentsSubmerged(CL,P,VE);
-            value = -[2,2,2];
-
-            testCase.verifyLessThan(abs(CB-value),5E-3);
-        end
-
-        function testvolumeMomentsSubmerged4(testCase)
-            CL = testCase.ModelSphere2Offn2.Mesh.Elements.';
-            P = testCase.ModelSphere2Offn2.Mesh.Nodes.' + [0,0,2];
-            [~,N] = size(testCase.ModelSphere2Offn2.Mesh.Elements);
-            VE = zeros(1,N); % List of volumes for each element
-            for j = 1:N
-                VE(j) = volume(testCase.ModelSphere2Offn2.Mesh,j);
-            end
-            [V,~] = volumeMomentsSubmerged(CL,P,VE);
-            value = sum(VE) / 2;
-
-            testCase.verifyLessThan(abs(V-value),5E-3);
-        end
-
-        function testvolumeMomentsSubmerged5(testCase)
             CL = testCase.ModelSphere2Offn2.Mesh.Elements.';
             P = testCase.ModelSphere2Offn2.Mesh.Nodes.' + [0,0,4];
             [~,N] = size(testCase.ModelSphere2Offn2.Mesh.Elements);
@@ -170,10 +142,10 @@ classdef testVolumes < matlab.unittest.TestCase
             [V,~] = volumeMomentsSubmerged(CL,P,VE);
             value = 0;
 
-            testCase.verifyLessThan(abs(V-value),5E-3);
+            testCase.verifyLessThan(abs(V-value),testCase.epsilon);
         end
 
-        function testvolumeMomentsSubmerged6(testCase)
+        function testvolumeMomentsSubmerged3(testCase)
             CL = testCase.ModelRect243.Mesh.Elements.';
             P = testCase.ModelRect243.Mesh.Nodes.' + [1,-1,-1.5];
             [~,N] = size(testCase.ModelRect243.Mesh.Elements);
@@ -187,7 +159,7 @@ classdef testVolumes < matlab.unittest.TestCase
             testCase.verifyLessThan(abs(V-value),testCase.epsilon);
         end
 
-        function testvolumeMomentsSubmerged7(testCase)
+        function testvolumeMomentsSubmerged4(testCase)
             CL = testCase.ModelRect243.Mesh.Elements.';
             P = testCase.ModelRect243.Mesh.Nodes.' + [1,-1,-1.5];
             [~,N] = size(testCase.ModelRect243.Mesh.Elements);
@@ -196,7 +168,91 @@ classdef testVolumes < matlab.unittest.TestCase
                 VE(j) = volume(testCase.ModelRect243.Mesh,j);
             end
             [~,CB] = volumeMomentsSubmerged(CL,P,VE);
-            value = [1,-1,-2.25];
+            value = [1,-1,-0.75];
+
+            testCase.verifyLessThan(abs(CB-value),testCase.epsilon);
+        end
+
+        function testvolumeMomentsSubmerged5(testCase)
+            CL = testCase.ModelRect243.Mesh.Elements.';
+            P = testCase.ModelRect243.Mesh.Nodes.' + [0,0,-3];
+            [~,N] = size(testCase.ModelRect243.Mesh.Elements);
+            VE = zeros(1,N); % List of volumes for each element
+            for j = 1:N
+                VE(j) = volume(testCase.ModelRect243.Mesh,j);
+            end
+            [~,CB] = volumeMomentsSubmerged(CL,P,VE);
+            value = [0,0,-1.5];
+
+            testCase.verifyLessThan(abs(CB-value),testCase.epsilon);
+        end
+
+        function testvolumeMomentsSubmerged6(testCase)
+            CL = testCase.ModelRect243.Mesh.Elements.';
+            P = testCase.ModelRect243.Mesh.Nodes.' + [0,0,-2];
+            [~,N] = size(testCase.ModelRect243.Mesh.Elements);
+            VE = zeros(1,N); % List of volumes for each element
+            for j = 1:N
+                VE(j) = volume(testCase.ModelRect243.Mesh,j);
+            end
+            [~,CB] = volumeMomentsSubmerged(CL,P,VE);
+            value = [0,0,-1];
+
+            testCase.verifyLessThan(abs(CB-value),testCase.epsilon);
+        end
+
+        function testvolumeMomentsSubmerged7(testCase)
+            CL = testCase.ModelSqr1.Mesh.Elements.';
+            P = testCase.ModelSqr1.Mesh.Nodes.';
+            [~,N] = size(testCase.ModelSqr1.Mesh.Elements);
+            VE = zeros(1,N); % List of volumes for each element
+            for j = 1:N
+                VE(j) = volume(testCase.ModelSqr1.Mesh,j);
+            end
+            [~,CB] = volumeMomentsSubmerged(CL,P,VE);
+            value = logical([1,1,1]);
+
+            testCase.assertEqual(isnan(CB),value);
+        end
+
+        function testvolumeMomentsSubmerged8(testCase)
+            CL = testCase.ModelSqr1.Mesh.Elements.';
+            P = testCase.ModelSqr1.Mesh.Nodes.' + [0,0,-1/3];
+            [~,N] = size(testCase.ModelSqr1.Mesh.Elements);
+            VE = zeros(1,N); % List of volumes for each element
+            for j = 1:N
+                VE(j) = volume(testCase.ModelSqr1.Mesh,j);
+            end
+            [~,CB] = volumeMomentsSubmerged(CL,P,VE);
+            value = [0,0,-1/6];
+
+            testCase.verifyLessThan(abs(CB-value),testCase.epsilon);
+        end
+
+        function testvolumeMomentsSubmerged9(testCase)
+            CL = testCase.ModelSqr1.Mesh.Elements.';
+            P = testCase.ModelSqr1.Mesh.Nodes.' + [0,0,-1/6];
+            [~,N] = size(testCase.ModelSqr1.Mesh.Elements);
+            VE = zeros(1,N); % List of volumes for each element
+            for j = 1:N
+                VE(j) = volume(testCase.ModelSqr1.Mesh,j);
+            end
+            [~,CB] = volumeMomentsSubmerged(CL,P,VE);
+            value = [0,0,-1/12];
+
+            testCase.verifyLessThan(abs(CB-value),testCase.epsilon);
+        end
+
+        function testvolumeMomentsSubmerged10(testCase)
+            CL = testCase.ModelSqr1.Mesh.Elements.';
+            P = testCase.ModelSqr1.Mesh.Nodes.' + [0,0,-5/6];
+            [~,N] = size(testCase.ModelSqr1.Mesh.Elements);
+            VE = zeros(1,N); % List of volumes for each element
+            for j = 1:N
+                VE(j) = volume(testCase.ModelSqr1.Mesh,j);
+            end
+            [~,CB] = volumeMomentsSubmerged(CL,P,VE);
+            value = [0,0,-5/12];
 
             testCase.verifyLessThan(abs(CB-value),testCase.epsilon);
         end
