@@ -4,6 +4,6 @@ Uses FEA to solve for the response function of a floating object to inciting wav
 # Requirements
 MATLAB
 Partial Differential Equation Toolbox
-Symbolic Math Toolbox
+Parallel Computing Toolbox
 
 # Citations
