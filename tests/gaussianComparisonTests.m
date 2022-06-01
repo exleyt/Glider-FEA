@@ -510,7 +510,7 @@ classdef gaussianComparisonTests
         %  of the indecies of s to be run
         function runSelectedG(self,select)
             model = createpde();
-            importGeometry(model,"test_models\sphere geometry.stl");
+            importGeometry(model,"..\models\Glider.stl");
             scale(model.Geometry, 0.001);
             generateMesh(model, 'GeometricOrder','linear','Hmin',0.01,'Hmax',0.1);
             P = model.Mesh.Nodes(:,model.Mesh.Elements(:,1)).';
@@ -555,7 +555,7 @@ classdef gaussianComparisonTests
 
         function runSelectedM(self,select)
             model = createpde();
-            importGeometry(model,"test_models\sphere geometry.stl");
+            importGeometry(model,"..\models\Glider.stl");
             scale(model.Geometry, 0.001);
             generateMesh(model, 'GeometricOrder','linear','Hmin',0.01,'Hmax',0.1);
             P = model.Mesh.Nodes(:,model.Mesh.Elements(:,1)).';
@@ -600,7 +600,7 @@ classdef gaussianComparisonTests
 
         function runSelected0(self,select)
             model = createpde();
-            importGeometry(model,"test_models\sphere geometry.stl");
+            importGeometry(model,"..\models\Glider.stl");
             scale(model.Geometry, 0.001);
             generateMesh(model, 'GeometricOrder','linear','Hmin',0.01,'Hmax',0.1);
             to = triangulation(model.Mesh.Elements.',model.Mesh.Nodes.');
