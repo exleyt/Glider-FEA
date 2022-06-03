@@ -2,6 +2,7 @@ function [PN,CB] = moveDepth(CL,P,VE,VT,EP)
 % Moves the object mesh (CL,P) vertically until the volume below z = 0
 %  is equal to VT. VE is an ordered list of volumes of each element in CL 
 %  and EP is the target accuracy/epsilon.
+% Returns the new set of points PN and center of buoyancy CB
     E = 0;
     [VS,CB] = volumeMomentsSubmerged(CL,P,VE);
 

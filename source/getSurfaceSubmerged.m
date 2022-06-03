@@ -1,5 +1,6 @@
 function [TO] = getSurfaceSubmerged(CL,P,EP)
-% Given a 3 element triangulation object returns the submerged surface
+% Given a triangulation (tetrahedron) object's ConnectivityList, Points,
+%  and a list of each tetrahedras volume returns the submerged surface
 %  assuming the waterplane is z = 0
     [nP,~] = size(P);
     PE = zeros(2*nP,3);

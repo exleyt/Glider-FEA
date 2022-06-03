@@ -9,8 +9,6 @@ function [phi] = velocityPotential(Tri,CP,FN,K)
 % CP is a (N,3) matrix of triangle center points
 % FN is a (N,3) matrix of triangle normals
 % K = w^2/g
-% w is the waves angular frequency
-% g is acceleration due to gravity 
 %
 % Solves the linear equation:
 % 2*pi*phi{j}(CP{n}) + Sum(k:[1,N],M{n,k}*phi{j}(CP{k})) = ...

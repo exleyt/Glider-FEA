@@ -7,9 +7,8 @@ function [D] = addedMassAndDampingMatrices(Tri,phi,FN6,p)
 % Where:
 % Tri is a (3,3,N) matrix of triangles where each row is [x,y,z]
 % phi is a list of radiation potential vectors (6,N)
-% FN is a list of normal vectors (S,3)
+% FN6 is a list of normal vectors and their rotational counterpart (S,6)
 % p is the density of water at the operating temperature
-% w is the gliders angular frequency
     [~,N] = size(phi);
 
     D = zeros(6,6);

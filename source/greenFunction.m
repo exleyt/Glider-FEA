@@ -6,8 +6,6 @@ function [result] = greenFunction(x,xi,K)
 % x is the location of the potential
 % xi is the location of the pulsating source
 % K = w^2/g
-% w is the waves angular frequency
-% g is acceleration due to gravity
     dx2 = (x - xi).^2;
     r1 = 1/sqrt(dx2(1) + dx2(2) + dx2(3));
     sx3 = x(3) + xi(3);

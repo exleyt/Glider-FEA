@@ -1,13 +1,14 @@
 function [S,Sx,Sy,Sxy,Sxx,Syy] = waterplaneMoments(CL,P,FN)
 % Returns the waterplane area and moments of a list of triangles
 %
-% Given a list of point P(n,3) and connectivity list of triangles CL(N,3)
-%  returns: 
+% Given a list of point P(n,3), connectivity list of triangles CL(N,3), and
+%  list of normals FN(n,3) returns: 
 % S the area of the waterplane
-% CF the waterplane's center of flotation [Ix/S,Iy/S,0] where:
-%  Ii =  the surface integral of (xi) 
-% Ixx and Ixx where:
-%  Iij =  the surface integral of (xi*xj)
+% Sx the integral of x over the waterplane area
+% Sy the integral of y over the waterplane area
+% Sxy the integral of xy over the waterplane area
+% Sxx the integral of xx over the waterplane area
+% Syy the integral of yy over the waterplane area
     S = 0;
     Sx = 0;
     Sy = 0;

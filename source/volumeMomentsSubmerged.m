@@ -1,7 +1,7 @@
 function [VS,CB] = volumeMomentsSubmerged(CL,P,VE)
-% Given a 4 element triangulation object abd the volumes of each element
-%  returns the submerged volume and center of buoyancy assuming the
-%  waterplane is z = 0
+% Given a triangulation (tetrahedron) object's ConnectivityList, Points,
+%  and a list of each tetrahedras volume returns the submerged volume and 
+%  center of buoyancy assuming the waterplane is z = 0
     VS = 0;    
     CB = zeros(1,3);
 
